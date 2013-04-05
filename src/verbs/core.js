@@ -36,7 +36,6 @@ define([], function() {
         if(typeof(object.timestamp) !== 'number') {
           object.timestamp = new Date().getTime();
         }
-        console.log('decorated ping: ', object);
         return method(object).
           then(function(result) {
             result.offset = new Date().getTime() - object.timestamp;
@@ -53,11 +52,32 @@ define([], function() {
       return function() {
         return method.apply(this, arguments).then(function(response) {
           if(! response.status) {
+            client._emit('registration-failed', response);
             throw "Registration failed: " + response.message;
           }
+          client._emit('registered');
           return response;
         });
       };
+    });
+
+    // Event: registered
+    //
+    // Fired when registration succeeded.
+    client.declareEvent('registered');
+
+    // Event: registration-failed
+    //
+    // Fired when registration failed.
+    client.declareEvent('registration-failed');
+
+    // Automatic registration, when 'register' option was passed during 'connect'.
+    client.on('connected', function() {
+      console.log('automatic registration!', client.options);
+      if(client.options.register) {
+        console.log('automatic registration!');
+        client.register(client.options.register);
+      }
     });
 
 
