@@ -97,6 +97,27 @@ define(['requirejs'], function(requirejs) {
         },
 
         {
+          desc: "#sendObject's promise is rejected, when the response is a confirmation with status=false",
+          timeout: 500,
+          run: function(env, test) {
+            env.client.sendObject({}).
+              then(function() {
+                test.result(false, "expected promise to be rejected");
+              }, function(error) {
+                test.assert(error.message, "something went wrong!");
+              });
+            var rid = env.fakeJsonClient._sentObjects[0].rid
+            var messageEventHandler = env.fakeJsonClient._eventHandlers.message[0];
+            messageEventHandler({
+              message: "something went wrong!",
+              verb: "confirm",
+              status: false,
+              rid: rid
+            });
+          }
+        },
+
+        {
           desc: "#declareVerb declares a new verb method",
           run: function(env, test) {
             env.client.declareVerb('travel', [], {});

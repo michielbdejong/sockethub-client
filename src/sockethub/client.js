@@ -150,7 +150,7 @@ define([
         return this.sendObject(object);
       };
       if(decorator) {
-        this[verb] = decorator(this[verb]);
+        this[verb] = decorator(this[verb].bind(this));
       }
     },
 
@@ -202,8 +202,17 @@ define([
       if(typeof(rid) !== 'undefined') {
         var promise = this._ridPromises[rid];
         if(promise) {
-          // rid is known. -> fulfill promise and clean up!
-          promise.fulfill(object);
+          // rid is known.
+          if(object.verb === 'confirm') {
+            // exception: confirm results are ignored, unless their status is fals
+            if(object.status) {
+              return;
+            } else {
+              promise.reject(object);
+            }
+          } else {
+            promise.fulfill(object);
+          }
           delete this._ridPromises[rid];
         } else {
           // rid is not known. -> unexpected response!
