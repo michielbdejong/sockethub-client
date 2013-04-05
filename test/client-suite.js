@@ -105,6 +105,21 @@ define(['requirejs'], function(requirejs) {
         },
 
         {
+          desc: "#declareVerb accepts an optional decorator for the verb method",
+          timeout: 500,
+          run: function(env, test) {
+            env.client.declareVerb('travel', [], {}, function(method) {
+              test.assertTypeAnd(method, 'function');
+              return function() {
+                test.done();
+                // actual verb method never called.
+              };
+            });
+            env.client.travel();
+          }
+        },
+
+        {
           desc: "verb methods return a promise",
           run: function(env, test) {
             env.client.declareVerb('travel', [], {});
@@ -213,6 +228,7 @@ define(['requirejs'], function(requirejs) {
             env.fakeJsonClient._eventHandlers.failed[0]();
           }
         }
+
       ]
     }
   ];

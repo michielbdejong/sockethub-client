@@ -132,7 +132,7 @@ define([
      *
      *   (end code)
      */
-    declareVerb: function(verb, attributeNames, template) {
+    declareVerb: function(verb, attributeNames, template, decorator) {
       this[verb] = function() {
         // 
         var args = Array.prototype.slice.call(arguments);
@@ -149,6 +149,9 @@ define([
         }.bind(this));
         return this.sendObject(object);
       };
+      if(decorator) {
+        this[verb] = decorator(this[verb]);
+      }
     },
 
     // incremented upon each call to sendObject
