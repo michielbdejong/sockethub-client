@@ -27,8 +27,9 @@ define(['../vendor/promising'], function(promising) {
    * Constructor parameters:
    *   jsonClient - a <JSONClient> instance
    */
-  var SockethubClient = function(jsonClient) {
+  var SockethubClient = function(jsonClient, options) {
     this.jsonClient = jsonClient;
+    this.options = options;
 
     this._ridPromises = {};
 
