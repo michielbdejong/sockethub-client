@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="require.js" data-main="ping"></script>
+  </head>
+  <body>
+    <a href="./">&laquo; Back to examples</a>
+    <h1>Ping example</h1>
+
+    <div id="error" style="color:red"></div>
+    <div id="disconnected" style="display:none;">
+      <form id="sockethub-connect">
+        <em>Connect your sockethub:</em>
+        <label>Sockethub URI:
+          <input type="text" name="uri" value="ws://localhost:10550/sockethub" style="width:250px;">
+        </label>
+        <input type="submit" value="Connect">
+      </form>
+    </div>
+    <div id="connected" style="display:none;">
+      <em>Your sockethub is connected.</em>
+
+      <form id="ping-form">
+        <div>
+          <label>Count <input type="number" name="count" value="4"></label>
+        </div>
+        <div>
+          <label>Delay <input type="number" name="delay" value="500">ms</label>
+        </div>
+        <div>
+          <input type="submit" value="Ping">
+        </div>
+      </form>
+
+      <ul id="ping-list">
+      </ul>
+    </div>
+
+  </body>
+</html>
