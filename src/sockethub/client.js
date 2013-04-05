@@ -66,6 +66,38 @@ define(['../vendor/promising'], function(promising) {
      *     });
      *
      *   (end code)
+     *
+     * Nested attributes:
+     *   If you want your verb methods to be able to modify deeply nested JSON
+     *   structures through positional arguments, you can specify the path using
+     *   dot notation.
+     *
+     * Example:
+     *   (start code)
+     *
+     *   client.declareVerb('set', ['target.platform', 'object'], {
+     *     platform: "dispatcher",
+     *     target: {}
+     *   });
+     *
+     *   client.set("smtp", {
+     *     server: "example.com"
+     *   });
+     *
+     *   // passing in "smtp" as "platform" here does not alter the toplevel
+     *   // "platform" attribute, but instead adds one to "target":
+     *   {
+     *     "verb": "set",
+     *     "platform": "dispatcher",
+     *     "target": {
+     *       "platform": "smtp"
+     *     },
+     *     "object": {
+     *       "server": "example.com"
+     *     }
+     *   }
+     *
+     *   (end code)
      */
     declareVerb: function(verb, attributeNames, template) {
       this[verb] = function() {
@@ -73,13 +105,13 @@ define(['../vendor/promising'], function(promising) {
         var object = extend({}, template, { verb: verb });
         attributeNames.forEach(function(attrName, index) {
           var value = args[index];
-          var current = object[attrName];
+          var current = this._getDeepAttr(object, attrName);
           if(typeof(current) === 'undefined' && typeof(value) === 'undefined') {
             throw new Error(
               "Expected a value for parameter " + attrName + ", but got undefined!"
             );
           }
-          object[attrName] = value;
+          this._setDeepAttr(object, attrName, value);
         });
         return this._send(object);
       }
@@ -98,6 +130,21 @@ define(['../vendor/promising'], function(promising) {
 
       this.jsonClient.send(extend(object, { rid: rid }));
       return promise;
+    },
+
+    _getDeepAttr: function(object, path, _parts) {
+      var parts = _parts || path.split('.');
+      var next = object[parts.shift()];
+      return parts.length ? this._getDeepAttr(next, undefined, parts) : next;
+    }
+
+    _setDeepAttr: function(object, path, value, _parts) {
+      var parts = _parts || path.split('.');
+      if(parts.length > 1) {
+        this._setDeepAttr(object[parts.shift()], undefined, value, parts);
+      } else {
+        object[parts[0]] = value;
+      }
     }
 
   };
