@@ -3,6 +3,29 @@ define([], function() {
   var coreVerbs = function(client) {
 
     // Verb: ping
+    //
+    // Sends a "ping" command to the sockethub and calculates it's offset
+    // upon a reply.
+    //
+    // Example:
+    //   (start code)
+    //
+    //   var client = SockethubClient.connect({ host: 'localhost' });
+    //
+    //   client.on('connected', function() {
+    //     client.register({ secret: '123' }).
+    //       then(function() {
+    //         return client.ping();
+    //       }).
+    //       then(function(response) {
+    //         console.log('sockethub reply received after: ' + response.offset + 'ms');
+    //       }, function(error) {
+    //         console.log('sending ping failed: ' + error.message);
+    //       });
+    //   });
+    //
+    //   (end code)
+    //
     client.declareVerb('ping', [], {
       platform: 'dispatcher'
     }, function(method) {
