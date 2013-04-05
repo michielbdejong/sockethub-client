@@ -24,7 +24,7 @@ define(['requirejs'], function(requirejs) {
           on: function(eventName, handler) {
             this._eventHandlers[eventName].push(handler);
           },
-          _eventHandlers: { message: [] },
+          _eventHandlers: { message: [], connected: [], disconnected: [] },
           _sentObjects: []
         };
         env.client = new env.SockethubClient(env.fakeJsonClient);
@@ -162,7 +162,7 @@ define(['requirejs'], function(requirejs) {
         },
 
         {
-          desc: "verb methods' positional parameter can modify nested structures from the tempalte",
+          desc: "verb methods' positional parameters can modify nested structures from the template",
           run: function(env, test) {
             env.client.declareVerb('travel', ['origin.city', 'destination.city'], {
               origin: {},
@@ -175,6 +175,30 @@ define(['requirejs'], function(requirejs) {
             test.assertAnd(sentObject.origin.city, 'Hamburg');
             test.assertAnd(sentObject.destination.city, 'Berlin');
             test.done();
+          }
+        },
+
+        {
+          desc: "the client forwards 'connected' events from the JSONClient",
+          timeout: 500,
+          run: function(env, test) {
+            env.client.on('connected', function() {
+              test.done();
+            });
+            test.assertAnd(env.fakeJsonClient._eventHandlers.connected.length, 1);
+            env.fakeJsonClient._eventHandlers.connected[0]();
+          }
+        },
+
+        {
+          desc: "the client forwards 'disconnected' events from the JSONClient",
+          timeout: 500,
+          run: function(env, test) {
+            env.client.on('disconnected', function() {
+              test.done();
+            });
+            test.assertAnd(env.fakeJsonClient._eventHandlers.disconnected.length, 1);
+            env.fakeJsonClient._eventHandlers.disconnected[0]();
           }
         }
       ]

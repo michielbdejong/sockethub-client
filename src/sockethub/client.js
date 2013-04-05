@@ -1,4 +1,7 @@
-define(['../vendor/promising'], function(promising) {
+define([
+  '../vendor/promising',
+  './event_handling'
+], function(promising, eventHandling) {
 
   function extend(target) {
     var sources = Array.prototype.slice.call(arguments, 1);
@@ -33,7 +36,11 @@ define(['../vendor/promising'], function(promising) {
 
     this._ridPromises = {};
 
+    eventHandling(this, 'connected', 'disconnected');
+
     jsonClient.on('message', this._processIncoming.bind(this));
+    this._delegateEvent('connected', jsonClient);
+    this._delegateEvent('disconnected', jsonClient);
   };
 
   SockethubClient.prototype = {

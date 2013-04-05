@@ -23,6 +23,12 @@ define([], function() {
       if(! (eventName in this._handlers)) {
         throw "Unknown event: " + eventName;
       }
+    },
+
+    _delegateEvent: function(eventName, target) {
+      target.on(eventName, function(event) {
+        this._emit(eventName, event);
+      }.bind(this));
     }
   };
 
