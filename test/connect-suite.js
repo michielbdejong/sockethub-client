@@ -14,8 +14,9 @@ define(['requirejs'], function(requirejs) {
         ], function(connect) {
           env.connect = connect;
 
-          global.WebSocket = function(uri) {
+          global.WebSocket = function(uri, protocol) {
             env.websocketURI = uri;
+            env.websocketProtocol = protocol;
             env.websocketInstances.push(this);
           };
 
@@ -25,6 +26,7 @@ define(['requirejs'], function(requirejs) {
 
       beforeEach: function(env, test) {
         env.websocketURI = undefined;
+        env.websocketProtocol = undefined;
         env.websocketInstances = [];
         test.done();
       },
@@ -60,7 +62,9 @@ define(['requirejs'], function(requirejs) {
           run: function(env, test) {
             env.connect('ws://localhost:81');
             test.assertAnd(env.websocketInstances.length, 1);
-            test.assert(env.websocketURI, 'ws://localhost:81');
+            test.assertAnd(env.websocketURI, 'ws://localhost:81');
+            test.assertAnd(env.websocketProtocol, 'sockethub');
+            test.done();
           }
         },
 
