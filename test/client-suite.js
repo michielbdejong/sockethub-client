@@ -68,6 +68,41 @@ define(['requirejs'], function(requirejs) {
             test.assertAnd(sent[2].rid, 3);
             test.done();
           }
+        },
+
+        {
+          desc: "#declareVerb declares a new verb method",
+          run: function(env, test) {
+            env.client.declareVerb('travel', [], {});
+            test.assertType(env.client.travel, 'function');
+          }
+        },
+
+        {
+          desc: "verb methods send an object with the right verb",
+          run: function(env, test) {
+            env.client.declareVerb('travel', [], {});
+
+            env.client.travel();
+
+            test.assertAnd(env.fakeJsonClient._sentObjects.length, 1);
+            test.assertAnd(env.fakeJsonClient._sentObjects[0].verb, 'travel');
+            test.done();
+          }
+        },
+
+        {
+          desc: "verb methods attach positional arguments as attributes to the method",
+          run: function(env, test) {
+            env.client.declareVerb('travel', ['origin', 'destination'], {});
+
+            env.client.travel('Hamburg', 'Berlin');
+
+            var sentObject = env.fakeJsonClient._sentObjects.shift();
+            test.assertAnd(sentObject.origin, 'Hamburg');
+            test.assertAnd(sentObject.destination, 'Berlin');
+            test.done();
+          }
         }
       ]
     }
