@@ -1,4 +1,4 @@
-define([], function() {
+define(['./event_handling'], function(eventHandling) {
 
   /**
    * Class: JSONClient
@@ -11,7 +11,10 @@ define([], function() {
    */
   var JSONClient = function(socket) {
     this.socket = socket;
-    this._handlers = {
+
+    eventHandling(
+      this,
+
       /**
        * Event: message
        *
@@ -21,8 +24,8 @@ define([], function() {
        *   object - the unpacked JSON object
        *
        */
-      message: []
-    };
+      'message'
+    );
 
     // start listening.
     this._listen();
@@ -39,16 +42,6 @@ define([], function() {
       this.socket.send(JSON.stringify(object));
     },
 
-    /**
-     * Method: on
-     *
-     * Install an event handler for the given event name.
-     */
-    on: function(eventName, handler) {
-      this._validateEvent(eventName);
-      this._handlers[eventName].push(handler);
-    },
-
     // Start listening on socket
     _listen: function() {
       this.socket.onmessage = this._processMessageEvent.bind(this);
@@ -57,23 +50,6 @@ define([], function() {
     // Emit "message" event 
     _processMessageEvent: function(event) {
       this._emit('message', JSON.parse(event.data));
-    },
-
-
-    // event handling trivia.
-
-    _emit: function(eventName) {
-      this._validateEvent(eventName);
-      var args = Array.prototype.slice.call(arguments, 1);
-      this._handlers[eventName].forEach(function(handler) {
-        handler.apply(this, args);
-      });
-    },
-
-    _validateEvent: function(eventName) {
-      if(! (eventName in this._handlers)) {
-        throw "Unknown event: " + eventName;
-      }
     }
 
   };
