@@ -127,7 +127,7 @@ define(['../vendor/promising'], function(promising) {
             );
           }
           this._setDeepAttr(object, attrName, value);
-        });
+        }.bind(this));
         return this.sendObject(object);
       };
     },

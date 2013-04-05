@@ -103,6 +103,40 @@ define(['requirejs'], function(requirejs) {
             test.assertAnd(sentObject.destination, 'Berlin');
             test.done();
           }
+        },
+
+        {
+          desc: "verb methods apply the provided template to the sent message",
+          run: function(env, test) {
+            env.client.declareVerb('travel', [], {
+              origin: {},
+              destination: {}
+            });
+
+            env.client.travel();
+
+            var sentObject = env.fakeJsonClient._sentObjects.shift();
+            test.assertAnd(sentObject.origin, {});
+            test.assertAnd(sentObject.destination, {});
+            test.done();
+          }
+        },
+
+        {
+          desc: "verb methods' positional parameter can modify nested structures from the tempalte",
+          run: function(env, test) {
+            env.client.declareVerb('travel', ['origin.city', 'destination.city'], {
+              origin: {},
+              destination: {}
+            });
+
+            env.client.travel('Hamburg', 'Berlin');
+
+            var sentObject = env.fakeJsonClient._sentObjects.shift();
+            test.assertAnd(sentObject.origin.city, 'Hamburg');
+            test.assertAnd(sentObject.destination.city, 'Berlin');
+            test.done();
+          }
         }
       ]
     }
