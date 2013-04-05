@@ -18,12 +18,21 @@ define(['../vendor/promising'], function(promising) {
   /**
    * Class: SockethubClient
    *
-   * 
+   * Provides a boilerplate client, that knows no verbs and no meaning in the
+   * messages it processes, apart from the "rid" property.
+   *
+   * The client can then be extended with functionality, by using <declareVerb>,
+   * or be used directly by sending objects using <sendObject>.
+   *
+   * Constructor parameters:
+   *   jsonClient - a <JSONClient> instance
    */
   var SockethubClient = function(jsonClient) {
     this.jsonClient = jsonClient;
 
     this._ridPromises = {};
+
+    jsonClient.on('message', this._processIncoming.bind(this));
   };
 
   SockethubClient.prototype = {
@@ -116,6 +125,7 @@ define(['../vendor/promising'], function(promising) {
      */
     declareVerb: function(verb, attributeNames, template) {
       this[verb] = function() {
+        // 
         var args = Array.prototype.slice.call(arguments);
         var object = extend({}, template, { verb: verb });
         attributeNames.forEach(function(attrName, index) {
@@ -132,20 +142,33 @@ define(['../vendor/promising'], function(promising) {
       };
     },
 
-    // Property: ridCounter
-    //
+    // incremented upon each call to sendObject
     _ridCounter: 0,
 
-    // Attaches RID to given object and sends it.
-    // Returns a promise.
+    /**
+     * Method: sendObject
+     *
+     * Sends the object through the JSONClient, attaching a "rid" attribute to
+     * link it to a response.
+     *
+     * Returns a promise, which will be fulfilled as soon as a response carrying
+     * the same "rid" attribute is received.
+     *
+     * You can either call this directly, building messages by hand or first
+     * declare a verb using <declareVerb>, which will then call sendObject for you.
+     *
+     */
     sendObject: function(object) {
       var promise = promising();
+      // generate a new rid and store promise reference:
       var rid = ++this._ridCounter;
       this._ridPromises[rid] = promise;
-
+      // non-dectructively add 'rid' and send!
       this.jsonClient.send(extend(object, { rid: rid }));
       return promise;
     },
+
+    // _getDeepAttr / _setDeepAttr are used in declareType.
 
     _getDeepAttr: function(object, path, _parts) {
       var parts = _parts || path.split('.');
@@ -159,6 +182,24 @@ define(['../vendor/promising'], function(promising) {
         this._setDeepAttr(object[parts.shift()], undefined, value, parts);
       } else {
         object[parts[0]] = value;
+      }
+    },
+
+    _processIncoming: function(object) {
+      var rid = object.rid;
+      if(typeof(rid) !== 'undefined') {
+        var promise = this._ridPromises[rid];
+        if(promise) {
+          // rid is known. -> fulfill promise and clean up!
+          promise.fulfill(object);
+          delete this._ridPromises[rid];
+        } else {
+          // rid is not known. -> unexpected response!
+          //this._emit('unexpected-response', object);
+        }
+      } else {
+        // no rid set. -> this is not a response, but a message!
+        //this._emit('message', object);
       }
     }
 

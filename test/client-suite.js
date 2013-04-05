@@ -22,7 +22,7 @@ define(['requirejs'], function(requirejs) {
             this._sentObjects.push(object);
           },
           on: function(eventName, handler) {
-            this._eventHandlers[eventName] = handler;
+            this._eventHandlers[eventName].push(handler);
           },
           _eventHandlers: { message: [] },
           _sentObjects: []
@@ -32,6 +32,14 @@ define(['requirejs'], function(requirejs) {
       },
 
       tests: [
+
+        {
+          desc: "it installs a 'message' handler on the JSON client",
+          run: function(env, test) {
+            test.assert(env.fakeJsonClient._eventHandlers.message.length, 1);
+          }
+        },
+
         {
           desc: "#sendObject attaches a 'rid'",
           run: function(env, test) {
@@ -44,15 +52,6 @@ define(['requirejs'], function(requirejs) {
                 rid: 1
               }
             ]);
-          }
-        },
-
-        {
-          desc: "#sendObject returns a promise",
-          run: function(env, test) {
-            var result = env.client.sendObject({});
-            test.assertTypeAnd(result, 'object');
-            test.assertType(result.then, 'function');
           }
         },
 
@@ -71,10 +70,50 @@ define(['requirejs'], function(requirejs) {
         },
 
         {
+          desc: "#sendObject returns a promise",
+          run: function(env, test) {
+            var result = env.client.sendObject({});
+            test.assertTypeAnd(result, 'object');
+            test.assertType(result.then, 'function');
+          }
+        },
+
+        {
+          desc: "#sendObject's promise is fulfilled, when a response is received",
+          timeout: 500,
+          run: function(env, test) {
+            env.client.sendObject({}).
+              then(function(response) {
+                test.assert(response.info, "this is the response");
+              });
+            var sent = env.fakeJsonClient._sentObjects;
+            var rid = sent[0].rid;
+            var messageEventHandler = env.fakeJsonClient._eventHandlers.message[0];
+            messageEventHandler({
+              info: "this is the response",
+              rid: rid
+            });
+          }
+        },
+
+        {
           desc: "#declareVerb declares a new verb method",
           run: function(env, test) {
             env.client.declareVerb('travel', [], {});
             test.assertType(env.client.travel, 'function');
+          }
+        },
+
+        {
+          desc: "verb methods return a promise",
+          run: function(env, test) {
+            env.client.declareVerb('travel', [], {});
+
+            var result = env.client.travel();
+
+            test.assertTypeAnd(result, 'object');
+            test.assertTypeAnd(result.then, 'function');
+            test.done();
           }
         },
 
