@@ -158,6 +158,10 @@ define([
       }
     },
 
+    declareEvent: function(eventName) {
+      this._addEvent(eventName);
+    },
+
     // incremented upon each call to sendObject
     _ridCounter: 0,
 

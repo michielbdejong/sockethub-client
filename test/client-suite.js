@@ -262,6 +262,18 @@ define(['requirejs'], function(requirejs) {
             test.assertAnd(env.fakeJsonClient._eventHandlers.failed.length, 1);
             env.fakeJsonClient._eventHandlers.failed[0]();
           }
+        },
+
+        {
+          desc: "#declareEvent adds a custom event",
+          timeout: 500,
+          run: function(env, test) {
+            env.client.declareEvent('something-happened');
+            env.client.on('something-happened', function() {
+              test.done();
+            });
+            env.client._emit('something-happened');
+          }
         }
 
       ]

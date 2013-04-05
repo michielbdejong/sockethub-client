@@ -29,6 +29,10 @@ define([], function() {
       target.on(eventName, function(event) {
         this._emit(eventName, event);
       }.bind(this));
+    },
+
+    _addEvent: function(eventName) {
+      this._handlers[eventName] = [];
     }
   };
 
@@ -67,7 +71,7 @@ define([], function() {
     }
     object._handlers = {};
     eventNames.forEach(function(eventName) {
-      object._handlers[eventName] = [];
+      object._addEvent(eventName);
     });
   };
 });
