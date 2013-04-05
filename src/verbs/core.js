@@ -22,6 +22,28 @@ define([], function() {
       };
     });
 
+
+    // Verb: register
+    client.declareVerb('register', ['object'], {
+      platform: 'dispatcher',
+    }, function(method) {
+      return function() {
+        return method.apply(this, arguments).then(function(response) {
+          if(! response.status) {
+            throw "Registration failed: " + response.message;
+          }
+          return response;
+        });
+      };
+    });
+
+
+    // Verb: set
+    client.declareVerb('set', ['target.platform', 'object'], {
+      platform: 'dispatcher',
+      target: {}
+    });
+
   };
 
   return coreVerbs;
