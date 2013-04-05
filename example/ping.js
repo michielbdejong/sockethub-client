@@ -9,44 +9,63 @@ define(['sockethub'], function(sockethub) {
 
   var connectedWrapper = document.getElementById('connected');
   var disconnectedWrapper = document.getElementById('disconnected');
+  var registeringWrapper = document.getElementById('registering');
+
   var errorElement = document.getElementById('error');
 
   var sockethubConnectForm = document.getElementById('sockethub-connect');
+
+  var disconnectButtonElement = document.getElementById('disconnect-button');
 
   var pingListElement = document.getElementById('ping-list');
   var pingFormElement = document.getElementById('ping-form');
 
   disconnectedWrapper.style.display = 'block';
 
+  var disconnectRequested = false;
+
   // sockethub connection
 
   sockethubConnectForm.addEventListener('submit', function(event) {
     event.preventDefault();
 
-    sockethubClient = sockethub.connect(event.target.uri.value);
+    sockethubClient = sockethub.connect(event.target.uri.value, {
+      register: {
+        secret: event.target.secret.value
+      }
+    });
 
     sockethubClient.on('connected', function() {
       console.log('connected!');
       errorElement.innerHTML = '';
       disconnectedWrapper.style.display = 'none';
+      connectedWrapper.style.display = 'none';
+      registeringWrapper.style.display = 'block';
+    });
+
+    sockethubClient.on('registered', function() {
+      console.log('registered');
+      errorElement.innerHTML = '';
+      disconnectedWrapper.style.display = 'none';
       connectedWrapper.style.display = 'block';
+      registeringWrapper.style.display = 'none';
+    });
 
-
-      sockethubClient.register({
-        secret: '1234567890'
-      }).then(function() {
-        console.log('registration complete');
-      }, function(error) {
-        console.log('registration failed!', error);
-        errorElement.innerHTML = "Registration failed: " + error.message;
-      });
-
+    sockethubClient.on('registration-failed', function(error) {
+      console.log('registration failed', error);
+      errorElement.innerHTML = "Registration failed: " + error.message;
+      disconnectedWrapper.style.display = 'block';
+      connectedWrapper.style.display = 'none';
+      registeringWrapper.style.display = 'none';
     });
 
     sockethubClient.on('disconnected', function() {
       console.log('disconnected!');
+      errorElement.innerHTML = disconnectRequested ? '' : 'disconnected!';
+      disconnectRequested = false;
       disconnectedWrapper.style.display = 'block';
       connectedWrapper.style.display = 'none';
+      registeringWrapper.style.display = 'none';
     });
 
     sockethubClient.on('failed', function() {
@@ -54,6 +73,13 @@ define(['sockethub'], function(sockethub) {
     });
 
     return false;
+  });
+
+  // disconnect button
+
+  disconnectButtonElement.addEventListener('click', function() {
+    disconnectRequested = true; // prevent 'disconnected' error message.
+    sockethubClient.disconnect();
   });
 
   // ping form
