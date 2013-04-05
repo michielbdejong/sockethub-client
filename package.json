@@ -1,0 +1,12 @@
+{
+  "name":"sockethub-client",
+  "version":"0.0.1-dev",
+  "devDependencies": {
+    "requirejs":"*",
+    "amdefine":"*",
+    "teste":"*"
+  },
+  "scripts": {
+    "test":"node_modules/.bin/teste"
+  }
+}
