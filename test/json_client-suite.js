@@ -63,6 +63,30 @@ define(['requirejs'], function(requirejs) {
             env.client.send({ socket: 'hub' });
             test.assert(env.sentMessages, [ '{"socket":"hub"}' ]);
           }
+        },
+
+        {
+          desc: "it emits 'connected', once the websocket is connected",
+          timeout: 500,
+          run: function(env, test) {
+            env.client.on('connected', function() {
+              test.done();
+            });
+            test.assertTypeAnd(env.socket.onopen, 'function', 'expected onopen handler on the socket');
+            env.socket.onopen();
+          }
+        },
+
+        {
+          desc: "it emits 'disconnected', once the websocket is closed",
+          timeout: 500,
+          run: function(env, test) {
+            env.client.on('disconnected', function() {
+              test.done();
+            });
+            test.assertTypeAnd(env.socket.onclose, 'function', 'expected onclose handler on the socket');
+            env.socket.onclose();
+          }
         }
 
       ]

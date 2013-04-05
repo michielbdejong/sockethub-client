@@ -24,7 +24,21 @@ define(['./event_handling'], function(eventHandling) {
        *   object - the unpacked JSON object
        *
        */
-      'message'
+      'message',
+
+      /**
+       * Event: connected
+       *
+       * Emitted when the websocket is opened.
+       */
+      'connected',
+
+      /**
+       * Event: disconnected
+       *
+       * Emitted when the websocket is closed.
+       */
+      'disconnected'
     );
 
     // start listening.
@@ -45,6 +59,12 @@ define(['./event_handling'], function(eventHandling) {
     // Start listening on socket
     _listen: function() {
       this.socket.onmessage = this._processMessageEvent.bind(this);
+      this.socket.onopen = function() {
+        this._emit('connected');
+      }.bind(this);
+      this.socket.onclose = function() {
+        this._emit('disconnected');
+      }.bind(this);
     },
 
     // Emit "message" event 
