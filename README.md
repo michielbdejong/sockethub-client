@@ -1,12 +1,12 @@
 
-= Sockethub Client
+# Sockethub Client
 
 This library handles all the nitty-gritty details of talking to your
 [sockethub](http://sockethub.org/).
 
 [![Build Status](https://secure.travis-ci.org/sockethub/sockethub-client.png)](http://travis-ci.org/sockethub/sockethub-client)
 
-== Getting started
+## Getting started
 
 Include [sockethub-client.js](https://github.com/sockethub/sockethub-client/raw/master/sockethub-client.js) script:
 
@@ -32,7 +32,7 @@ sockethubClient.on('registered', function() {
 });
 ```
 
-== Using sockethub-client with an AMD loader, such as [RequireJS](requirejs.org)
+### Using sockethub-client with an AMD loader, such as [RequireJS](requirejs.org)
 
 Sockethub Client internally uses AMD to organize code. That means you can just
 integrate the sockethub-client source tree into your project's source and use
