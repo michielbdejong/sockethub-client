@@ -123,6 +123,14 @@ define(['requirejs'], function(requirejs) {
             var client = env.connect({ host: 'localhost', something: 'else' });
             test.assert(client.options.something, 'else');
           }
+        },
+
+        {
+          desc: "It interprets URIs without a protocol as a 'host' option",
+          run: function(env, test) {
+            var client = env.connect('localhost');
+            test.assert(env.websocketURI, 'ws://localhost:10550/sockethub');
+          }
         }
 
       ]

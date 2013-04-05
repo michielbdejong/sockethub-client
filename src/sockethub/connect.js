@@ -18,6 +18,12 @@ define([
    */
   var connect = function(uriOrOptions) {
     var uri, options;
+
+    if(typeof(uriOrOptions) === 'string' &&
+       ! uriOrOptions.match(/wss?\:\/\//)) {
+      uriOrOptions = { host: uriOrOptions };
+    }
+
     if(typeof(uriOrOptions) === 'string') {
       uri = uriOrOptions, options = {};
     } else if(typeof(uriOrOptions) === 'object') {
