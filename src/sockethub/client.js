@@ -148,6 +148,10 @@ define([
       this._addEvent(eventName);
     },
 
+    disconnect: function() {
+      this.jsonClient.disconnect();
+    },
+
     // incremented upon each call to sendObject
     _ridCounter: 0,
 
@@ -194,7 +198,7 @@ define([
     },
 
     _processIncoming: function(object) {
-      console.log('RECEIVE', object);
+      console.log(object.verb === 'confirm' ? 'CONFIRM' : 'RECEIVE', object);
       var rid = object.rid;
       if(typeof(rid) !== 'undefined') {
         var promise = this._ridPromises[rid];

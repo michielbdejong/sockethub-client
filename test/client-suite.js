@@ -21,6 +21,9 @@ define(['requirejs'], function(requirejs) {
           send: function(object) {
             this._sentObjects.push(object);
           },
+          disconnect: function() {
+            this.disconnectCalled = true;
+          },
           on: function(eventName, handler) {
             this._eventHandlers[eventName].push(handler);
           },
@@ -273,6 +276,14 @@ define(['requirejs'], function(requirejs) {
               test.done();
             });
             env.client._emit('something-happened');
+          }
+        },
+
+        {
+          desc: "#disconnect is delegated to the JSONClient",
+          run: function(env, test) {
+            env.client.disconnect();
+            test.assert(env.fakeJsonClient.disconnectCalled, true);
           }
         }
 

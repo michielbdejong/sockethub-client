@@ -63,6 +63,15 @@ define(['./event_handling'], function(eventHandling) {
       this.socket.send(JSON.stringify(object));
     },
 
+    /**
+     * Method: disconnect
+     *
+     * Close the socket.
+     */
+    disconnect: function() {
+      this.socket.close();
+    },
+
     // Start listening on socket
     _listen: function() {
       this.socket.onmessage = this._processMessageEvent.bind(this);

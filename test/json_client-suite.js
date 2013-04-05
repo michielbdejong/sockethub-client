@@ -20,9 +20,13 @@ define(['requirejs'], function(requirejs) {
 
       beforeEach: function(env, test) {
         env.sentMessages = [];
+        env.socketClosed = false;
         env.socket = {
           send: function(data) {
             env.sentMessages.push(data);
+          },
+          close: function() {
+            env.socketClosed = true;
           }
         };
         env.client = new env.JSONClient(env.socket);
@@ -99,6 +103,14 @@ define(['requirejs'], function(requirejs) {
             });
             test.assertTypeAnd(env.socket.onclose, 'function', 'expected onclose handler on the socket');
             env.socket.onclose();
+          }
+        },
+
+        {
+          desc: "#disconnect closes the socket connection",
+          run: function(env, test) {
+            env.client.disconnect();
+            test.assert(env.socketClosed, true);
           }
         }
 
