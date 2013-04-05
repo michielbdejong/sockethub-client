@@ -42,7 +42,7 @@ define([
     } else {
       throw "SockethubClient.connect expects a URI, specified via a String or Object.";
     }
-    return new SockethubClient(new JSONClient(new WebSocket(uri), DEFAULT_PROTOCOL), options);
+    return new SockethubClient(new JSONClient(new WebSocket(uri, DEFAULT_PROTOCOL)), options);
   };
 
   return connect;
