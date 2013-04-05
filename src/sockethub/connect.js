@@ -1,7 +1,8 @@
 define([
+  './extend',
   './json_client',
   './client'
-], function(JSONClient, SockethubClient) {
+], function(extend, JSONClient, SockethubClient) {
 
   var DEFAULT_PORT = 10550;
   var DEFAULT_PATH = '/sockethub';
@@ -16,8 +17,11 @@ define([
    * Returns a new <SockethubClient> instance, connected to a WebSocket through a
    * <JSONClient>.
    */
-  var connect = function(uriOrOptions) {
-    var uri, options;
+  var connect = function(uriOrOptions, options) {
+    var uri;
+    if(typeof(options) !== 'object') {
+      options = {};
+    }
 
     if(typeof(uriOrOptions) === 'string' &&
        ! uriOrOptions.match(/wss?\:\/\//)) {
@@ -25,9 +29,9 @@ define([
     }
 
     if(typeof(uriOrOptions) === 'string') {
-      uri = uriOrOptions, options = {};
+      uri = uriOrOptions;
     } else if(typeof(uriOrOptions) === 'object') {
-      options = uriOrOptions;
+      extend(options, uriOrOptions);
       if(! options.host) {
         throw "Required 'host' option not present";
       }

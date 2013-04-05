@@ -131,6 +131,14 @@ define(['requirejs'], function(requirejs) {
             var client = env.connect('localhost');
             test.assert(env.websocketURI, 'ws://localhost:10550/sockethub');
           }
+        },
+
+        {
+          desc: "It takes options as it's second argument, when a URI string is given",
+          run: function(env, test) {
+            var client = env.connect('localhost', { port: 81 });
+            test.assert(env.websocketURI, 'ws://localhost:81/sockethub');
+          }
         }
 
       ]
