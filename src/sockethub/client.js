@@ -1,5 +1,20 @@
 define(['../vendor/promising'], function(promising) {
 
+  function extend(target) {
+    var sources = Array.prototype.slice.call(arguments, 1);
+    sources.forEach(function(source) {
+      for(var key in source) {
+        if(typeof(source[key]) === 'object' &&
+           typeof(target[key]) === 'object') {
+          extend(target[key], source[key]);
+        } else {
+          target[key] = source[key];
+        }
+      }
+    });
+    return target;
+  }
+
   /**
    * Class: SockethubClient
    *
@@ -11,7 +26,7 @@ define(['../vendor/promising'], function(promising) {
     this._ridPromises = {};
   };
 
-  Client.prototype = {
+  SockethubClient.prototype = {
 
     /**
      * Method: declareVerb
@@ -113,8 +128,8 @@ define(['../vendor/promising'], function(promising) {
           }
           this._setDeepAttr(object, attrName, value);
         });
-        return this._send(object);
-      }
+        return this.sendObject(object);
+      };
     },
 
     // Property: ridCounter
@@ -123,7 +138,7 @@ define(['../vendor/promising'], function(promising) {
 
     // Attaches RID to given object and sends it.
     // Returns a promise.
-    _send: function(object) {
+    sendObject: function(object) {
       var promise = promising();
       var rid = ++this._ridCounter;
       this._ridPromises[rid] = promise;
@@ -136,7 +151,7 @@ define(['../vendor/promising'], function(promising) {
       var parts = _parts || path.split('.');
       var next = object[parts.shift()];
       return parts.length ? this._getDeepAttr(next, undefined, parts) : next;
-    }
+    },
 
     _setDeepAttr: function(object, path, value, _parts) {
       var parts = _parts || path.split('.');
