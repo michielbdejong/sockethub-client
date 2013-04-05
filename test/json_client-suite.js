@@ -78,10 +78,23 @@ define(['requirejs'], function(requirejs) {
         },
 
         {
-          desc: "it emits 'disconnected', once the websocket is closed",
+          desc: "it emits 'disconnected', once the websocket is closed after being opened",
           timeout: 500,
           run: function(env, test) {
             env.client.on('disconnected', function() {
+              test.done();
+            });
+            test.assertTypeAnd(env.socket.onclose, 'function', 'expected onclose handler on the socket');
+            env.socket.onopen();
+            env.socket.onclose();
+          }
+        },
+
+        {
+          desc: "it emits 'failed', if the websocket is closed without ever being opened",
+          timeout: 500,
+          run: function(env, test) {
+            env.client.on('failed', function() {
               test.done();
             });
             test.assertTypeAnd(env.socket.onclose, 'function', 'expected onclose handler on the socket');

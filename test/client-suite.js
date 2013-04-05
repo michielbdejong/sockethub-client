@@ -24,7 +24,7 @@ define(['requirejs'], function(requirejs) {
           on: function(eventName, handler) {
             this._eventHandlers[eventName].push(handler);
           },
-          _eventHandlers: { message: [], connected: [], disconnected: [] },
+          _eventHandlers: { message: [], connected: [], disconnected: [], failed: [] },
           _sentObjects: []
         };
         env.client = new env.SockethubClient(env.fakeJsonClient);
@@ -199,6 +199,18 @@ define(['requirejs'], function(requirejs) {
             });
             test.assertAnd(env.fakeJsonClient._eventHandlers.disconnected.length, 1);
             env.fakeJsonClient._eventHandlers.disconnected[0]();
+          }
+        },
+
+        {
+          desc: "the client forwards 'failed' events from the JSONClient",
+          timeout: 500,
+          run: function(env, test) {
+            env.client.on('failed', function() {
+              test.done();
+            });
+            test.assertAnd(env.fakeJsonClient._eventHandlers.failed.length, 1);
+            env.fakeJsonClient._eventHandlers.failed[0]();
           }
         }
       ]

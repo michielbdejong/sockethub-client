@@ -38,7 +38,14 @@ define(['./event_handling'], function(eventHandling) {
        *
        * Emitted when the websocket is closed.
        */
-      'disconnected'
+      'disconnected',
+
+      /**
+       * Event: disconnected
+       *
+       * Emitted when the websocket connection failed.
+       */
+      'failed'
     );
 
     // start listening.
@@ -59,11 +66,18 @@ define(['./event_handling'], function(eventHandling) {
     // Start listening on socket
     _listen: function() {
       this.socket.onmessage = this._processMessageEvent.bind(this);
+      this.connected = false;
       this.socket.onopen = function() {
+        this.connected = true;
         this._emit('connected');
       }.bind(this);
       this.socket.onclose = function() {
-        this._emit('disconnected');
+        if(this.connected) {
+          this._emit('disconnected');
+          this.connected = false;
+        } else {
+          this._emit('failed');
+        }
       }.bind(this);
     },
 

@@ -36,11 +36,12 @@ define([
 
     this._ridPromises = {};
 
-    eventHandling(this, 'connected', 'disconnected');
+    eventHandling(this, 'connected', 'disconnected', 'failed');
 
     jsonClient.on('message', this._processIncoming.bind(this));
     this._delegateEvent('connected', jsonClient);
     this._delegateEvent('disconnected', jsonClient);
+    this._delegateEvent('failed', jsonClient);
   };
 
   SockethubClient.prototype = {
