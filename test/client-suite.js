@@ -215,6 +215,20 @@ define(['requirejs'], function(requirejs) {
         },
 
         {
+          desc: "verb methods' final parameter is used to extend the message, if it is present and an object",
+          run: function(env, test) {
+            env.client.declareVerb('travel', ['origin', 'destination'], {});
+
+            env.client.travel('Hamburg', 'Berlin', {
+              modeOfTransport: 'train'
+            });
+
+            var sentObject = env.fakeJsonClient._sentObjects.shift();
+            test.assert(sentObject.modeOfTransport, 'train');
+          }
+        },
+
+        {
           desc: "the client forwards 'connected' events from the JSONClient",
           timeout: 500,
           run: function(env, test) {

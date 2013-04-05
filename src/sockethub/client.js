@@ -147,6 +147,10 @@ define([
           }
           this._setDeepAttr(object, attrName, value);
         }.bind(this));
+        var extensionArg = args[attributeNames.length];
+        if(typeof(extensionArg) === 'object') {
+          extend(object, extensionArg);
+        }
         return this.sendObject(object);
       };
       if(decorator) {
@@ -175,8 +179,10 @@ define([
       // generate a new rid and store promise reference:
       var rid = ++this._ridCounter;
       this._ridPromises[rid] = promise;
+      object = extend(object, { rid: rid });
+      console.log('SEND', object);
       // non-dectructively add 'rid' and send!
-      this.jsonClient.send(extend(object, { rid: rid }));
+      this.jsonClient.send(object);
       return promise;
     },
 
@@ -198,6 +204,7 @@ define([
     },
 
     _processIncoming: function(object) {
+      console.log('RECEIVE', object);
       var rid = object.rid;
       if(typeof(rid) !== 'undefined') {
         var promise = this._ridPromises[rid];
