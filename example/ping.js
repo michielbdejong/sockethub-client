@@ -3,7 +3,7 @@ requirejs.config({
   baseUrl: '../src'
 });
 
-define(['sockethub'], function(sockethub) {
+define(['sockethub-client'], function(sockethub) {
 
   var sockethubClient;
 
