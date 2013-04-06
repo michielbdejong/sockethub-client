@@ -30,6 +30,7 @@ sockethubClient.on('registered', function() {
   });
 
 });
+```
 
 ### Events
 
