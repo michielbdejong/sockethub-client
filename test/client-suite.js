@@ -285,6 +285,28 @@ define(['requirejs'], function(requirejs) {
             env.client.disconnect();
             test.assert(env.fakeJsonClient.disconnectCalled, true);
           }
+        },
+
+        {
+          desc: "messages received without a 'rid' cause 'message' events",
+          timeout: 500,
+          run: function(env, test) {
+            env.client.on('message', function(message) {
+              test.assert(message, { ber: 'lin' });
+            });
+            env.fakeJsonClient._eventHandlers.message[0]({ ber: 'lin' });
+          }
+        },
+
+        {
+          desc: "messages with a unknown 'rid' cause 'unexpected-response' events",
+          timeout: 500,
+          run: function(env, test) {
+            env.client.on('unexpected-response', function(message) {
+              test.assert(message.rid, 12345);
+            });
+            env.fakeJsonClient._eventHandlers.message[0]({ rid: 12345 });
+          }
         }
 
       ]

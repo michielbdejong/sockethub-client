@@ -22,7 +22,7 @@ define([
 
     this._ridPromises = {};
 
-    eventHandling(this, 'connected', 'disconnected', 'failed');
+    eventHandling(this, 'connected', 'disconnected', 'failed', 'message', 'unexpected-response');
 
     jsonClient.on('message', this._processIncoming.bind(this));
     this._delegateEvent('connected', jsonClient);
@@ -217,11 +217,11 @@ define([
           delete this._ridPromises[rid];
         } else {
           // rid is not known. -> unexpected response!
-          //this._emit('unexpected-response', object);
+          this._emit('unexpected-response', object);
         }
       } else {
         // no rid set. -> this is not a response, but a message!
-        //this._emit('message', object);
+        this._emit('message', object);
       }
     }
 
