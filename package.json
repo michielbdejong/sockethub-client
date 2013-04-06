@@ -7,7 +7,6 @@
     "teste":"*"
   },
   "scripts": {
-    "test":"node_modules/.bin/teste",
-    "doc":"naturaldocs -i src -o html doc -p doc/.config"
+    "test":"node_modules/.bin/teste"
   }
 }
