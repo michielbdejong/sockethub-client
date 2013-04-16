@@ -1,8 +1,9 @@
 define([
   'sockethub/client',
   'sockethub/connect',
+  'sockethub/remoteStorage',
   'verbs/core'
-], function(SockethubClient, connect, coreVerbs) {
+], function(SockethubClient, connect, connectRemoteStorage, coreVerbs) {
 
   SockethubClient.connect = function() {
     var client = connect.apply(this, arguments);
@@ -10,6 +11,8 @@ define([
     coreVerbs(client);
     return client;
   }
+
+  SockethubClient.prototype.connectStorage = connectRemoteStorage;
 
   return SockethubClient;
 
