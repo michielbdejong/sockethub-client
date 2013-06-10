@@ -1,4 +1,3 @@
-
 /**
  * almond 0.1.4 Copyright (c) 2011, The Dojo Foundation All Rights Reserved.
  * Available via the MIT or new BSD license.
@@ -441,7 +440,7 @@ define('sockethub/extend',[], function() {
         };
         if(result) {
           setTimeout(function() {
-            notifyConsumer(consumer)
+            notifyConsumer(consumer);
           }, 0);
         } else {
           consumers.push(consumer);
@@ -453,16 +452,16 @@ define('sockethub/extend',[], function() {
         resolve(true, arguments);
         return this;
       },
-      
+
       reject: function() {
         resolve(false, arguments);
         return this;
       }
-      
+
     };
 
     return promise;
-  };
+  }
 
   if(typeof(module) !== 'undefined') {
     module.exports = getPromise;
@@ -674,7 +673,7 @@ define('sockethub/client',[
      */
     declareVerb: function(verb, attributeNames, template, decorator) {
       this[verb] = function() {
-        // 
+        //
         var args = Array.prototype.slice.call(arguments);
         var object = extend({}, template, { verb: verb });
         attributeNames.forEach(function(attrName, index) {
@@ -877,7 +876,7 @@ define('sockethub/json_client',['./event_handling'], function(eventHandling) {
       }.bind(this);
     },
 
-    // Emit "message" event 
+    // Emit "message" event
     _processMessageEvent: function(event) {
       this._emit('message', JSON.parse(event.data));
     }
@@ -932,12 +931,12 @@ define('sockethub/connect',[
         options.path = DEFAULT_PATH;
       }
       uri = (
-        (options.ssl ? 'wss' : 'ws')
-          + '://'
-          + options.host
-          + ':'
-          + options.port
-          + options.path
+        (options.ssl ? 'wss' : 'ws') +
+            '://' +
+            options.host +
+            ':' +
+            options.port +
+            options.path
       );
     } else {
       throw "SockethubClient.connect expects a URI, specified via a String or Object.";
@@ -998,7 +997,7 @@ define('verbs/core',[], function() {
 
     // Verb: register
     client.declareVerb('register', ['object'], {
-      platform: 'dispatcher',
+      platform: 'dispatcher'
     }, function(method) {
       return function() {
         return method.apply(this, arguments).then(function(response) {
@@ -1054,9 +1053,7 @@ define('sockethub-client',[
     // extend the client with core verbs
     coreVerbs(client);
     return client;
-  }
+  };
 
   return SockethubClient;
-
 });
-
