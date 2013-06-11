@@ -1,5 +1,4 @@
 (function (window, document, undefined) {
-
   function SockethubClient() {}
 
   function Connection(sock, host, enablePings, confirmationTimeout) {
@@ -85,7 +84,7 @@
 
     function respondCommand(data) {
       if (typeof cmds[data.rid] !== 'object') {
-        console.log('CMDS: ', cmds);
+        //console.log('CMDS: ', cmds);
         throw ('respondCommand() - unable to find command object for rid '+data.rid);
       }
       var now = new Date().getTime();
@@ -263,7 +262,7 @@
         (typeof callback === 'function')) {
       this.callbacks[type] = callback;
     } else {
-      console.log('invalid callback function or type name: ' + type);
+      console.log('  [sockethub] ERROR: invalid callback function or type name: ' + type);
     }
   };
 
@@ -327,7 +326,7 @@
       verb: "register",
       object: data
     });
-    console.log('OBJ:', obj);
+    //console.log('OBJ:', obj);
     return obj.send();
   };
 
@@ -394,7 +393,7 @@
 
     if (typeof o.host === 'undefined') {
       //log(3, null, "sockethub.connect requires an object parameter with a 'host' property", o);
-      console.log(" [SockethubClient] sockethub.connect requires an object parameter with a 'host' property", o);
+      console.log("  [SockethubClient] sockethub.connect requires an object parameter with a 'host' property", o);
       promise.reject("sockethub.connect requires an object parameter with a 'host' property");
       return promise;
     }
@@ -408,13 +407,13 @@
     }
 
     //log(1, null, 'attempting to connect to ' + o.host);
-    console.log(' [SockethubClient] attempting to connect to ' + o.host);
+    console.log('  [SockethubClient] attempting to connect to ' + o.host);
 
     try {
       sock = new WebSocket(o.host, 'sockethub');
     } catch (e) {
       //log(3, null, 'error connecting to sockethub: ' + e);
-      console.log(' [SockethubClient] error connecting to sockethub: ' + e);
+      console.log('  [SockethubClient] error connecting to sockethub: ' + e);
       promise.reject('error connecting to sockethub: ' + e);
     }
 
@@ -423,7 +422,7 @@
     }
 
     sock.onopen = function () {
-      console.log(' [SockethubClient] onopen fired');
+      console.log('  [SockethubClient] onopen fired');
       if (isConnecting) {
         isConnecting = false;
         var connection = new Connection(sock, o.host, o.enablePings, o.confirmationTimeout);
@@ -432,7 +431,7 @@
     };
 
     sock.onclose = function () {
-      console.log(' [SockethubClient] onclose fired');
+      console.log('  [SockethubClient] onclose fired');
       if (isConnecting) {
         isConnecting = false;
         promise.reject("Unable to connect to sockethub at "+o.host);
