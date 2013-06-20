@@ -54,12 +54,11 @@ function ($rootScope, $q, $timeout, settings) {
 
   function setConfig(p) {
     var defer = $q.defer();
-
-    if (existsConfig(p)) {
-      config = p;
-      console.log('SH.setConfig: ' + p.host + ', ' + p.port + ', ' +
+    console.log('SH.setConfig: received ' + p.host + ', ' + p.port + ', ' +
                                      p.path + ', TLS:' + p.tls +
                                      ', SECRET:' + p.secret);
+    if (existsConfig(p)) {
+      config = p;
       defer.resolve();
     } else {
       defer.reject('some config properties missing');
@@ -88,6 +87,7 @@ function ($rootScope, $q, $timeout, settings) {
 
   function callOnReady(p) {
     var defer = $q.defer();
+    var delay = 500;
     (function __call() {
       if (p.testFunc()) {
         console.log('SH: calling: '+p.callFunc);
@@ -99,7 +99,8 @@ function ($rootScope, $q, $timeout, settings) {
           });
       } else {
         console.log('SH: delaying call 1s');
-        $timeout(__call, 1000);
+        if (delay === 30000) { delay = 15000; } // 30sec delay limit
+        $timeout(__call, delay + (delay * 2));
       }
     })();
     return defer.promise;
