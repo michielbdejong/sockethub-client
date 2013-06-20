@@ -99,8 +99,10 @@ function ($rootScope, $q, $timeout, settings) {
           });
       } else {
         console.log('SH: delaying call 1s');
-        if (delay === 30000) { delay = 15000; } // 30sec delay limit
-        $timeout(__call, delay + (delay * 2));
+        if (delay < 30000) {
+          delay = delay + (delay * 2);
+        }
+        $timeout(__call, delay);
       }
     })();
     return defer.promise;
