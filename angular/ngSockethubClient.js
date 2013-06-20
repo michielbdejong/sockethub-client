@@ -2,7 +2,7 @@ angular.module('ngSockethubClient', []).
 
 
 /**
- * settings service
+ * default settings
  */
 value('settings', {
   sockethub: function () {
@@ -16,51 +16,15 @@ value('settings', {
     };
 
     return settings;
-  },
-  save: function (scope, factory) {
-    scope.config = factory.config.data;
-    scope.model = {};
-    scope.model.submitMsg = '';
-    scope.save = function () {
-      scope.saving = true;
-      factory.config.set().then(function () {
-        scope.model.submitMsg = 'config saved!';
-        scope.saving = false;
-      }, function (err) {
-        scope.model.submitMsg = err;
-      });
-    };
   }
 }).
 
 
 /**
- * connect to sockethub on startup
- */
-run(['settings', 'SH', '$rootScope',
-function (settings, SH, $rootScope) {
-  var s = settings.sockethub();
-  // connect to sockethub and register
-  SH.setConfig(s.host, s.port,
-               s.path, s.tls,
-               s.secret).then(function () {
-    return SH.connect();
-  }).then(function () {
-    return SH.register();
-  }).then(function () {
-    console.log('connected to sockethub');
-  }, function (err) {
-    console.log('error connection to sockethub: ', err);
-    $rootScope.$broadcast('SockethubConnectFailed', {message: err});
-  });
-}]).
-
-
-/**
  * factory: SH
  */
-factory('SH', ['$rootScope', '$q', '$timeout',
-function ($rootScope, $q, $timeout) {
+factory('SH', ['$rootScope', '$q', '$timeout', 'settings',
+function ($rootScope, $q, $timeout, settings) {
 
   var sc;
   var callbacks = {
@@ -70,37 +34,35 @@ function ($rootScope, $q, $timeout) {
     'close': {}
   };
 
-  var config = {
-    host: '',
-    port: '',
-    path: '/sockethub',
-    tls: false,
-    secret: ''
-  };
+  var config = settings;
 
-  function existsConfig() {
-    if ((!config.host) && (config.host !== '') &&
-        (!config.port) && (config.port !== '') &&
-        (!config.path) && (config.path !== '') &&
-        (!config.tls) && (config.tls !== '') &&
-        (!config.secret) && (config.secret !== '')) {
+  function existsConfig(p) {
+    if (!p) {
+      p = config;
+    }
+    if ((!p.host) && (p.host !== '') &&
+        (!p.port) && (p.port !== '') &&
+        (!p.path) && (p.path !== '') &&
+        (!p.tls) && (p.tls !== '') &&
+        (!p.secret) && (p.secret !== '')) {
       return true;
     } else {
       return false;
     }
   }
 
-  function setConfig(host, port, path, tls, secret) {
+  function setConfig(p) {
     var defer = $q.defer();
 
-    console.log('SH.setConfig: '+host+', '+port+', '+path+', TLS:'+tls+', SECRET:'+secret);
-    config.host = host;
-    config.port = port;
-    config.path = path;
-    config.tls = tls;
-    config.secret = secret;
-
-    defer.resolve();
+    if (existsConfig(p)) {
+      config = p;
+      console.log('SH.setConfig: ' + p.host + ', ' + p.port + ', ' +
+                                     p.path + ', TLS:' + p.tls +
+                                     ', SECRET:' + p.secret);
+      defer.resolve();
+    } else {
+      defer.reject('some config properties missing');
+    }
     return defer.promise;
   }
 
