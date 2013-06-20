@@ -27,6 +27,7 @@ factory('SH', ['$rootScope', '$q', '$timeout', 'settings',
 function ($rootScope, $q, $timeout, settings) {
 
   var sc;
+  var config = settings;
   var callbacks = {
     'error': {},
     'message': {},
@@ -34,7 +35,6 @@ function ($rootScope, $q, $timeout, settings) {
     'close': {}
   };
 
-  var config = settings;
 
   function existsConfig(p) {
     if (!p) {
@@ -43,13 +43,14 @@ function ($rootScope, $q, $timeout, settings) {
     if ((!p.host) && (p.host !== '') &&
         (!p.port) && (p.port !== '') &&
         (!p.path) && (p.path !== '') &&
-        (!p.tls) && (p.tls !== '') &&
+        (typeof p.tls === 'boolean') &&
         (!p.secret) && (p.secret !== '')) {
       return true;
     } else {
       return false;
     }
   }
+
 
   function setConfig(p) {
     var defer = $q.defer();
@@ -66,6 +67,7 @@ function ($rootScope, $q, $timeout, settings) {
     return defer.promise;
   }
 
+
   function isConnected() {
     if (sc) {
       return sc.isConnected();
@@ -73,6 +75,7 @@ function ($rootScope, $q, $timeout, settings) {
       return false;
     }
   }
+
 
   function isRegistered() {
     if (sc) {
@@ -101,7 +104,6 @@ function ($rootScope, $q, $timeout, settings) {
     })();
     return defer.promise;
   }
-
 
 
   function connect() {
