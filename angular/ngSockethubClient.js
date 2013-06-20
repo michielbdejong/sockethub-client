@@ -36,15 +36,20 @@ function ($rootScope, $q, $timeout, settings) {
   };
 
 
-  function existsConfig(p) {
+  function existsConfig() {
+    return verifyConfig(config);
+  }
+
+
+  function verifyConfig(p) {
     if (!p) {
       p = config;
     }
-    if ((!p.host) && (p.host !== '') &&
-        (!p.port) && (p.port !== '') &&
-        (!p.path) && (p.path !== '') &&
+    if ((p.host) && (p.host !== '') &&
+        (p.port) && (p.port !== '') &&
+        (p.path) && (p.path !== '') &&
         (typeof p.tls === 'boolean') &&
-        (!p.secret) && (p.secret !== '')) {
+        (p.secret) && (p.secret !== '')) {
       return true;
     } else {
       return false;
@@ -57,7 +62,7 @@ function ($rootScope, $q, $timeout, settings) {
     console.log('SH.setConfig: received ' + p.host + ', ' + p.port + ', ' +
                                      p.path + ', TLS:' + p.tls +
                                      ', SECRET:' + p.secret);
-    if (existsConfig(p)) {
+    if (verifyConfig(p)) {
       config = p;
       defer.resolve();
     } else {
