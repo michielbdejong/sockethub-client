@@ -398,7 +398,7 @@
       return promise;
     }
 
-    if (typeof o.confirmationTimeout !== 'undefined') {
+    if (typeof o.confirmationTimeout === 'undefined') {
       o.confirmationTimeout = 4000;
     }
 
