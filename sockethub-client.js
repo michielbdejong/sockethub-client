@@ -51,41 +51,48 @@
       }
     };
 
-    function finishCommand(rid, result, message) {
-      if (typeof cmds[rid] !== 'object') {
-        throw ('finishCommand() - unable to find command object for rid '+rid);
-      }
+    var _this = this;
 
-      cmd = cmds[rid];
-      delete cmds[rid];
-      var p = cmd.promise;
-      delete cmd.promise;
+    function finishCommand(data) {
+      if (typeof cmds[data.rid] === 'object') {
 
-      if (result) {
-        p.fulfill();
+        cmd = cmds[data.rid];
+        delete cmds[data.rid];
+        var p = cmd.promise;
+        delete cmd.promise;
+
+        if (data.status) {
+          p.fulfill();
+        } else {
+          p.reject(data.message);
+        }
       } else {
-        p.reject(message);
+        _this.log(4, 'finishCommand - unable to find command object for rid ' + data.rid + ' ... skipping');
+
       }
     }
 
-    function confirmCommand(rid, result, message) {
-      if (typeof cmds[rid] !== 'object') {
-        throw ('finishCommand() - unable to find command object for rid '+rid);
+    function confirmCommand(data) {
+
+      if (typeof cmds[data.rid] !== 'object') {
+        throw ('finishCommand() - unable to find command object for rid '+data.rid);
       }
 
-      if (!result) {
-        finishCommand(rid. result, message);
-      } else {
-        cmds[rid].confirmed = new Date().getTime();
+      cmds[data.rid].confirmed = new Date().getTime();
+      cmds[data.rid].confirmResult = data.status;
+      if (!data.status) {
+        finishCommand(data);
+        //cmds[data.rid].response = false;
       }
       //console.log('CMDS:', cmds);
     }
-    var _this = this;
 
     function respondCommand(data) {
+
       if (typeof cmds[data.rid] !== 'object') {
         //console.log('CMDS: ', cmds);
-        throw ('respondCommand() - unable to find command object for rid '+data.rid);
+        console.log('data object received: ', data);
+        throw ('respondCommand() - unable to find command object for rid ' + data.rid);
       }
       var now = new Date().getTime();
       cmds[data.rid].response = now;
@@ -138,20 +145,23 @@
     };
 
     sock.onmessage = function (e) {
-      console.log(' ');
-      _this.log(4, null, 'onmessage fired ', e.data);
+      //console.log(' ');
+      //_this.log(4, null, 'onmessage fired ' + JSON.stringify(e.data));
       //console.log('onmessage fired ', e.data);
 
       var data = JSON.parse(e.data);
       var now = new Date().getTime();
 
+      data.rid = (typeof data.rid !== 'undefined') ? data.rid : '';
+      data.result = (typeof data.status !== 'undefined') ? data.status : true;
+
       if (data.verb === 'confirm') {
-        _this.log(4, data.rid, 'confirmation receipt received. for rid '+data.rid);// + e.data);
-        confirmCommand(data.rid, true);
+        _this.log(4, data.rid, 'confirmation receipt received. for rid '+data.rid);
+        confirmCommand(data);
       } else {
         // now we know that this object is either a response (has an RID) or
         // a message (new messages from sockethub)
-        if (typeof data.rid === 'undefined') { // message
+        if (!data.rid) { // message
           //_this.log(2, data.rid, e.data);
           _this.callbacks.message(data);
           return;
@@ -181,6 +191,7 @@
     function Command(p) {
       this.sent = null;
       this.confirmed = null;
+      this.confirmResult = null;
       this.confirmTimeout = _this.cfg.confirmationTimeout;
       this.response = null;
       this.responseTimeout = 5000;
@@ -228,20 +239,28 @@
           setTimeout(function () {
             __this.log(4, "checking confirmation status for rid:"+__this.getRID());
             if (!__this.confirmed) {
-              __this.log(3, "confirmation not received after "+__this.confirmTimeout+'ms, sending again.');
-              __sendAttempt();
+              if (_this.assertConnected()) {
+                __this.log(3, "confirmation not received after "+__this.confirmTimeout+'ms, sending again.');
+                __sendAttempt();
+              } else {
+                // TODO : figure out reconnect strategy
+                _this.log(2, 'not connected, aborting command checks');
+                finishCommand(__this.getRID(), false, 'connection lost');
+              }
             } else {
-              __this.log(2, "confirmation received");
-              __this.log(4, 'setting responseTimeout '+__this.responseTimeout+'ms');
-              setTimeout(function () {
-                if (!__this.response) {
-                  __this.log(3, 'response not received, rejecting promise');
-                  finishCommand(__this.getRID(), false, 'response timed out');
-                } else {
-                  __this.log(2, 'response received');
+              __this.log(4, "confirmation received");
+              if (__this.confirmResult) {
+                __this.log(4, 'setting responseTimeout '+__this.responseTimeout+'ms');
+                setTimeout(function () {
+                  if (!__this.response) {
+                    __this.log(3, 'response not received, rejecting promise');
+                    finishCommand(__this.getRID(), false, 'response timed out');
+                  } else {
+                    __this.log(4, 'response received');
 
-                }
-              }, __this.responseTimeout);
+                  }
+                }, __this.responseTimeout);
+              }
             }
           }, __this.confirmTimeout);
         }
@@ -398,7 +417,7 @@
       return promise;
     }
 
-    if (typeof o.confirmationTimeout !== 'undefined') {
+    if (typeof o.confirmationTimeout === 'undefined') {
       o.confirmationTimeout = 4000;
     }
 
