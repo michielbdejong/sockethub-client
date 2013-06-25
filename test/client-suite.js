@@ -307,6 +307,17 @@ define(['requirejs'], function(requirejs) {
             });
             env.fakeJsonClient._eventHandlers.message[0]({ rid: 12345 });
           }
+        },
+
+        {
+          desc: "the client's 'connected' state is the same as the jsonClient's",
+          run: function(env, test) {
+            env.client.jsonClient.connected = true;
+            test.assertAnd(env.client.connected, true);
+            env.client.jsonClient.connected = false;
+            test.assertAnd(env.client.connected, false);
+            test.done();
+          }
         }
 
       ]

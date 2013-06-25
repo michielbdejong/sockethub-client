@@ -28,6 +28,10 @@ define([
     this._delegateEvent('connected', jsonClient);
     this._delegateEvent('disconnected', jsonClient);
     this._delegateEvent('failed', jsonClient);
+
+    this.__defineGetter__('connected', function() {
+      return this.jsonClient.connected;
+    });
   };
 
   SockethubClient.prototype = {
