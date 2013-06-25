@@ -589,6 +589,10 @@ define('sockethub/client',[
     this._delegateEvent('connected', jsonClient);
     this._delegateEvent('disconnected', jsonClient);
     this._delegateEvent('failed', jsonClient);
+
+    this.__defineGetter__('connected', function() {
+      return this.jsonClient.connected;
+    });
   };
 
   SockethubClient.prototype = {
@@ -1072,13 +1076,13 @@ define('verbs/core',[], function() {
       };
     });
 
-
     // Verb: register
     client.declareVerb('register', ['object'], {
       platform: 'dispatcher',
     }, function(method) {
       return function() {
         return method.apply(this, arguments).then(function(response) {
+          client.registered = response.status;
           if(! response.status) {
             setTimeout(function() {
               client._emit('registration-failed', response);
@@ -1090,6 +1094,8 @@ define('verbs/core',[], function() {
         });
       };
     });
+
+    client.registered = false;
 
     // Event: registered
     //
