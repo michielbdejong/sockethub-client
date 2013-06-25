@@ -44,13 +44,13 @@ define([], function() {
       };
     });
 
-
     // Verb: register
     client.declareVerb('register', ['object'], {
       platform: 'dispatcher',
     }, function(method) {
       return function() {
         return method.apply(this, arguments).then(function(response) {
+          client.registered = response.status;
           if(! response.status) {
             setTimeout(function() {
               client._emit('registration-failed', response);
@@ -62,6 +62,8 @@ define([], function() {
         });
       };
     });
+
+    client.registered = false;
 
     // Event: registered
     //
