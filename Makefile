@@ -7,4 +7,4 @@ build:
 doc:
 	naturaldocs -i src -o html doc -p doc/.config
 
-.PHONY: build default
+.PHONY: build default doc
