@@ -20,10 +20,6 @@
     sc.on('close', function (data) {
       console.log('received a close from sockethub: ', data);
     });
-
-    sc.on('message', function (data) {
-      console.log('received a new message from sockethub: ', data);
-    });
   }, function (err) {
     console.log('error connection to sockethub: ', err);
   });
