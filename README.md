@@ -53,10 +53,12 @@ for more information, see:
 
 Out of the box, `SockethubClient` implements these events:
 * `connected` - Fired once the WebSocket connection is established (i.e. socket.onopen has been called)
-* `close` - Fired in case the WebSocket connection is closed (i.e. socket.onclose has been called)
-* `error` - Fired when the client encounters an error of some sort.
+* `failed` - Fired when the WebSocket connection failed to be established
+* `disconnected` - Fired when the WebSocket connection is closed (but it had been connected)
 * `message` - Fired when the hub sends a message that isn't associated to a specific request.
-* `response` - Fired when the hub sends a message that looks like a response (i.e. has a "rid" attribute), but can't be associated with any known request.
+* `unexpected-response` - Fired when a response is received that carries a "rid" attribute, but that "rid" isn't known to us. This is an error case (and probably indicates a bug in the corresponding sockethub platform).
+* `registered` - Fired when `register` succeeds.
+* `registration-failed` - Fired when `register` fails.
 
 ### Properties
 
