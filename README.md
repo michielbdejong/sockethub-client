@@ -1,4 +1,3 @@
-
 # Sockethub Client
 
 This library handles all the nitty-gritty details of talking to your
@@ -21,7 +20,7 @@ var sc;
 var sockethubClient = SockethubClient.connect({
   host: 'ws://localhost:10550',
 }).then(function (connection) { // connected
-  var sc = connection;
+  sc = connection;
   sc.register({
     secret: "1234567890"
   }).then(initListeners, function () {
