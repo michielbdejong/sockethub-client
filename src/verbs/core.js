@@ -52,10 +52,12 @@ define([], function() {
       return function() {
         return method.apply(this, arguments).then(function(response) {
           if(! response.status) {
-            client._emit('registration-failed', response);
+            setTimeout(function() {
+              client._emit('registration-failed', response);
+            }, 0);
             throw "Registration failed: " + response.message;
           }
-          client._emit('registered');
+          setTimeout(function() { client._emit('registered'); }, 0);
           return response;
         });
       };

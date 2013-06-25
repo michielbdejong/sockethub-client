@@ -7,7 +7,7 @@ This library handles all the nitty-gritty details of talking to your
 
 ## Getting started
 
-Include [sockethub-client.js](https://github.com/sockethub/sockethub-client/raw/master/sockethub-client.js) script:
+Include [sockethub-client.js](https://github.com/nilclass/sockethub-client/raw/master/sockethub-client.js) script:
 
 ```html
   <script src="sockethub-client.js"></script>
@@ -16,38 +16,37 @@ Include [sockethub-client.js](https://github.com/sockethub/sockethub-client/raw/
 Create a client and wait for the "registered" event to fire:
 ```javascript
 
-var sc;
 var sockethubClient = SockethubClient.connect({
-  host: 'ws://localhost:10550',
-}).then(function (connection) { // connected
-  sc = connection;
-  sc.register({
-    secret: "1234567890"
-  }).then(initListeners, function (e) {
-    console.log('failed registering: ', e);
+  host: 'localhost',
+  register: {
+    secret: '1234567890'
+  }
+})
+
+sockethubClient.on('registered', function() {
+  // done!
+  // you can start calling verbs now, such as...
+
+  console.log('ping');
+  sockethubClient.ping().then(function() {
+    console.log('pong');
   });
-}, function (e) {
-  console.log('failed connecting: ', e);
+});
+```
+
+You may also want to set up some error handlers:
+```javascript
+sockethubClient.on('failed', function() {
+  console.error("Connection to sockethub failed!");
 });
 
-function initListeners() {
-  sc.on('message', function (data) {
-    console.log('SH received message');
-  });
-  sc.on('error', function (data) {
-    console.log('SH received error: ', data);
-  });
-  sc.on('response', function (data) {
-    console.log('SH received response: ', data);
-  });
-  sc.on('close', function (data) {
-    console.log('SH received close: ', data);
-  });
-}
+sockethubClient.on('disconnected', function() {
+  console.error("Sockethub got disconnected!");
+});
 ```
 
 for more information, see:
-[Quickstart](https://github.com/sockethub/sockethub-client/raw/master/doc/quickstart.md)
+[Quickstart](https://github.com/sockethub/sockethub-client/raw/master/doc/quickstart.md) (FIXME: may be outdated/deprecated)
 
 
 ### Events

@@ -1,6 +1,6 @@
 
 requirejs.config({
-  baseUrl: '../src'
+  baseUrl: '../../src'
 });
 
 define(['sockethub-client'], function(sockethub) {
