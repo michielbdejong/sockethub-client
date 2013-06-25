@@ -46,7 +46,7 @@ sockethubClient.on('disconnected', function() {
 ```
 
 for more information, see:
-[Quickstart](https://github.com/sockethub/sockethub-client/raw/master/doc/quickstart.md)
+[Quickstart](https://github.com/sockethub/sockethub-client/blob/master/doc/quickstart.md)
 
 
 ### Events
