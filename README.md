@@ -1,4 +1,3 @@
-
 # Sockethub Client
 
 This library handles all the nitty-gritty details of talking to your
