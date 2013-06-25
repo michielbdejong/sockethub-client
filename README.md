@@ -55,6 +55,13 @@ Out of the box, `SockethubClient` implements these events:
 * `message` - Fired when the hub sends a message that isn't associated to a specific request.
 * `response` - Fired when the hub sends a message that looks like a response (i.e. has a "rid" attribute), but can't be associated with any known request.
 
+### Properties
+
+The following properties are available for your use:
+* `options` - This is the options object that was passed to `SockethubClient.connect`.
+* `connected` - Boolean property reflecting the connection state of the socket.
+* `registered` - Boolean property. Initially false, set to the result of the `register` command once that returns.
+
 
 ## Using sockethub-client with an AMD loader, such as [RequireJS](requirejs.org)
 
