@@ -4,7 +4,7 @@ angular.module('ngSockethubClient', []).
 /**
  * default settings
  */
-value('settings', {
+value('SockethubSettings', {
   conn: {
     host: 'localhost',
     port: '10550',
@@ -46,7 +46,7 @@ value('settings', {
 /**
  * factory: SH
  */
-factory('SH', ['$rootScope', '$q', '$timeout', 'settings',
+factory('SH', ['$rootScope', '$q', '$timeout', 'SockethubSettings',
 function ($rootScope, $q, $timeout, settings) {
   var sc;
   var config = settings.conn;
@@ -86,7 +86,7 @@ function ($rootScope, $q, $timeout, settings) {
             $rootScope.$apply(defer.reject(e));
           });
       } else {
-        console.log('SH: delaying call 1s');
+        console.log('SH: delaying call ' + delay + 's');
         if (delay < 30000) {
           delay = delay + (delay * 2);
         }
@@ -232,7 +232,7 @@ function ($rootScope) {
 }]).
 
 
-directive('sockethubSettings', ['SH', 'settings', '$rootScope',
+directive('sockethubSettings', ['SH', 'SockethubSettings', '$rootScope',
 function (SH, settings, $rootScope) {
   return {
     restrict: 'A',
@@ -241,7 +241,6 @@ function (SH, settings, $rootScope) {
               '    <img src="{{ settings.env.logo }}" width="200" />' +
               '  </div>' +
               '  <div class="modal-body">' +
-              '    <p>In order to connect to Sockethub, please enter the host, port and secret provided to you from your service provider</p>' +
               '    <form name="settingsSockethub" class="form-horizontal" novalidate>' +
               '      <fieldset>' +
               '        <div class="control-group">' +
@@ -254,8 +253,20 @@ function (SH, settings, $rootScope) {
               '          <label for="port" class="control-label">Port</label>' +
               '          <div class="controls">' +
               '            <input type="text" class="required input-small" name="port" placeholder="Enter port..." ng-model="settings.conn.port" required>' +
-              '           </div>' +
-              '         </div>' +
+              '          </div>' +
+              '        </div>' +
+              '        <div class="control-group">' +
+              '          <label for="path" class="control-label">Path</label>' +
+              '          <div class="controls">' +
+              '            <input type="text" class="required input-large" name="path" placeholder="Enter path (if any)..." ng-model="settings.conn.path">' +
+              '          </div>' +
+              '        </div>' +
+              '        <div class="control-group">' +
+              '          <label for="tls" class="control-label">TLS</label>' +
+              '          <div class="controls checkbox-control">' +
+              '            <input type="checkbox" name="tls" ng-model="settings.conn.tls">' +
+              '          </div>' +
+              '        </div>' +
               '        <div class="control-group">' +
               '          <label for="secret" class="control-label">Secret</label>' +
               '          <div class="controls">' +
@@ -278,13 +289,12 @@ function (SH, settings, $rootScope) {
               '  </div>' +
               '</div>',
     link: function (scope) {
-      console.log('SH SETTINGS: ', settings);
       scope.saving = false;
       scope.settings = settings;
       scope.save = function (cfg) {
         scope.saving = true;
         $rootScope.$broadcast('message', {
-              type: 'clear',
+              type: 'clear'
         });
         settings.save('conn', cfg);
         SH.connect().then(function () {
