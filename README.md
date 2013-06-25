@@ -7,7 +7,7 @@ This library handles all the nitty-gritty details of talking to your
 
 ## Getting started
 
-Include [sockethub-client.js](https://github.com/nilclass/sockethub-client/raw/master/sockethub-client.js) script:
+Include [sockethub-client.js](https://github.com/sockethub/sockethub-client/raw/master/sockethub-client.js) script:
 
 ```html
   <script src="sockethub-client.js"></script>
