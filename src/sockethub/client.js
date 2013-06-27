@@ -216,7 +216,11 @@ define([
               promise.reject(object);
             }
           } else {
-            promise.fulfill(object);
+            if('status' in object) {
+              promise[object.status ? 'fulfill' : 'reject'](object);
+            } else {
+              promise.fulfill(object);
+            }
           }
           delete this._ridPromises[rid];
         } else {
