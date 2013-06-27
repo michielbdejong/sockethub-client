@@ -49,6 +49,10 @@ define([], function() {
       platform: 'dispatcher',
     }, function(method) {
       return function() {
+        if(client.registered) {
+          console.log('WARNING: already registered!');
+          console.trace();
+        }
         return method.apply(this, arguments).then(function(response) {
           client.registered = response.status;
           if(! response.status) {
@@ -84,6 +88,10 @@ define([], function() {
       }
     });
 
+    client.on('disconnected', function() {
+      // make sure 'registered' flag is not set, in case the client is re-used.
+      delete client.registered;
+    });
 
     // Verb: set
     client.declareVerb('set', ['target.platform', 'object'], {
