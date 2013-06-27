@@ -118,6 +118,13 @@ function ($rootScope, $q, $timeout, settings) {
       });
     });
 
+    sc.on('register-failed', function (err) { // connected
+      console.log('Sockethub register failed ', err);
+      $rootScope.$apply(function () {
+        defer.reject(err);
+      });
+    });
+
     sc.on('failed', function (err) { // connection failed
       console.log('Sockethub connected failed ', err);
       $rootScope.$apply(function () {
@@ -126,21 +133,8 @@ function ($rootScope, $q, $timeout, settings) {
     });
 
     sc.on('disconnected', function (err) { // disconnected
-      console.log('Sockethub disconnected ', err);
-      $rootScope.$apply(function () {
-        defer.reject(err);
-      });
+      console.log('SH received disconnect(close) '+err);
     });
-
-    /*sc.on('error', function (data) { // error
-      if ((data.platform) &&
-          (callbacks['error'][data.platform])) {
-        console.log('SH passing error to platform: '+data.platform);
-        $rootScope.$apply(callbacks['error'][data.platform](data));
-      } else {
-        console.log('SH received error with nothing to call: ', data);
-      }
-    });*/
 
     sc.on('message', function (data) { // message
       if ((data.platform) &&
@@ -151,15 +145,6 @@ function ($rootScope, $q, $timeout, settings) {
         console.log('SH received message with nothing to call: ', data);
       }
     });
-
-    /*sc.on('close', function (data) { // close
-      console.log('SH received close: ', data);
-      if ((data) && (data.platform) &&
-          (callbacks[close][data.platform])) {
-        console.log('SH passing close to platform: '+data.platform);
-        $rootScope.$apply(callbacks['close'][data.platform](data));
-      }
-    });*/
 
     return defer.promise;
   }
