@@ -5,6 +5,10 @@ This library handles all the nitty-gritty details of talking to your
 
 [![Build Status](https://secure.travis-ci.org/sockethub/sockethub-client.png)](http://travis-ci.org/sockethub/sockethub-client)
 
+## Terms
+
+sockethub-client is dual-licensed under either the [MIT License](https://github.com/sockethub/sockethub-client/raw/master/LICENSE-MIT) or [GPLv3](https://github.com/sockethub/sockethub-client/raw/master/LICENSE-GPL) (at your choice).
+
 ## Getting started
 
 Include [sockethub-client.js](https://github.com/sockethub/sockethub-client/raw/master/sockethub-client.js) script:
