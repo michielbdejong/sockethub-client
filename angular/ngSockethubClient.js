@@ -118,7 +118,7 @@ function ($rootScope, $q, $timeout, settings) {
       });
     });
 
-    sc.on('register-failed', function (err) { // connected
+    sc.on('registration-failed', function (err) { // connected
       console.log('Sockethub register failed ', err);
       $rootScope.$apply(function () {
         defer.reject(err);
@@ -144,6 +144,10 @@ function ($rootScope, $q, $timeout, settings) {
       } else {
         console.log('SH received message with nothing to call: ', data);
       }
+    });
+
+    sc.on('unexpected-response', function (msg) {
+      console.log('SH unexpected response: ', msg);
     });
 
     return defer.promise;
