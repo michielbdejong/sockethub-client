@@ -460,12 +460,12 @@ define('sockethub/extend',[], function() {
         resolve(true, arguments);
         return this;
       },
-      
+
       reject: function() {
         resolve(false, arguments);
         return this;
       }
-      
+
     };
 
     return promise;
@@ -685,7 +685,7 @@ define('sockethub/client',[
      */
     declareVerb: function(verb, attributeNames, template, decorator) {
       this[verb] = function() {
-        // 
+        //
         var args = Array.prototype.slice.call(arguments);
         var object = extend({}, template, { verb: verb });
         attributeNames.forEach(function(attrName, index) {
@@ -888,7 +888,7 @@ define('sockethub/json_client',['./event_handling'], function(eventHandling) {
       }.bind(this);
     },
 
-    // Emit "message" event 
+    // Emit "message" event
     _processMessageEvent: function(event) {
       this._emit('message', JSON.parse(event.data));
     }
