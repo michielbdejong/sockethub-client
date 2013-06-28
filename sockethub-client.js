@@ -1,3 +1,23 @@
+/**
+ * sockethub-client 0.0.1-dev
+ *
+ * © 2013 Niklas E. Cathor (https://github.com/nilclass)
+ * © 2013 Nick Jennings (https://github.com/silverbucket)
+ *
+ * sockethub-client is dual-licensed under either the MIT License or GPLv3 (at your choice).
+ * See the files LICENSE-MIT and LICENSE-GPL for details.
+ *
+ * The latest version of sockethub-client can be found here:
+ *   git://github.com/sockethub/sockethub-client.git
+ *
+ * For more information about sockethub visit http://sockethub.org/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define(factory);
@@ -347,6 +367,26 @@ var requirejs, require, define;
 
 define("vendor/almond", function(){});
 
+/**
+ * This file is part of sockethub-client.
+ *
+ * © 2013 Niklas E. Cathor (https://github.com/nilclass)
+ * © 2013 Nick Jennings (https://github.com/silverbucket)
+ *
+ * sockethub-client is dual-licensed under either the MIT License or GPLv3 (at your choice).
+ * See the files LICENSE-MIT and LICENSE-GPL for details.
+ *
+ * The latest version of sockethub-client can be found here:
+ *   git://github.com/sockethub/sockethub-client.git
+ *
+ * For more information about sockethub visit http://sockethub.org/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
+
 define('sockethub/extend',[], function() {
   function extend(target) {
     var sources = Array.prototype.slice.call(arguments, 1);
@@ -460,12 +500,12 @@ define('sockethub/extend',[], function() {
         resolve(true, arguments);
         return this;
       },
-
+      
       reject: function() {
         resolve(false, arguments);
         return this;
       }
-
+      
     };
 
     return promise;
@@ -480,6 +520,26 @@ define('sockethub/extend',[], function() {
   }
 
 })();
+
+/**
+ * This file is part of sockethub-client.
+ *
+ * © 2013 Niklas E. Cathor (https://github.com/nilclass)
+ * © 2013 Nick Jennings (https://github.com/silverbucket)
+ *
+ * sockethub-client is dual-licensed under either the MIT License or GPLv3 (at your choice).
+ * See the files LICENSE-MIT and LICENSE-GPL for details.
+ *
+ * The latest version of sockethub-client can be found here:
+ *   git://github.com/sockethub/sockethub-client.git
+ *
+ * For more information about sockethub visit http://sockethub.org/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
 
 define('sockethub/event_handling',[], function() {
 
@@ -558,6 +618,26 @@ define('sockethub/event_handling',[], function() {
     });
   };
 });
+
+/**
+ * This file is part of sockethub-client.
+ *
+ * © 2013 Niklas E. Cathor (https://github.com/nilclass)
+ * © 2013 Nick Jennings (https://github.com/silverbucket)
+ *
+ * sockethub-client is dual-licensed under either the MIT License or GPLv3 (at your choice).
+ * See the files LICENSE-MIT and LICENSE-GPL for details.
+ *
+ * The latest version of sockethub-client can be found here:
+ *   git://github.com/sockethub/sockethub-client.git
+ *
+ * For more information about sockethub visit http://sockethub.org/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
 
 define('sockethub/client',[
   './extend',
@@ -685,7 +765,7 @@ define('sockethub/client',[
      */
     declareVerb: function(verb, attributeNames, template, decorator) {
       this[verb] = function() {
-        //
+        // 
         var args = Array.prototype.slice.call(arguments);
         var object = extend({}, template, { verb: verb });
         attributeNames.forEach(function(attrName, index) {
@@ -777,7 +857,11 @@ define('sockethub/client',[
               promise.reject(object);
             }
           } else {
-            promise.fulfill(object);
+            if('status' in object) {
+              promise[object.status ? 'fulfill' : 'reject'](object);
+            } else {
+              promise.fulfill(object);
+            }
           }
           delete this._ridPromises[rid];
         } else {
@@ -795,6 +879,26 @@ define('sockethub/client',[
   return SockethubClient;
 
 });
+
+/**
+ * This file is part of sockethub-client.
+ *
+ * © 2013 Niklas E. Cathor (https://github.com/nilclass)
+ * © 2013 Nick Jennings (https://github.com/silverbucket)
+ *
+ * sockethub-client is dual-licensed under either the MIT License or GPLv3 (at your choice).
+ * See the files LICENSE-MIT and LICENSE-GPL for details.
+ *
+ * The latest version of sockethub-client can be found here:
+ *   git://github.com/sockethub/sockethub-client.git
+ *
+ * For more information about sockethub visit http://sockethub.org/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
 
 define('sockethub/json_client',['./event_handling'], function(eventHandling) {
 
@@ -888,7 +992,7 @@ define('sockethub/json_client',['./event_handling'], function(eventHandling) {
       }.bind(this);
     },
 
-    // Emit "message" event
+    // Emit "message" event 
     _processMessageEvent: function(event) {
       this._emit('message', JSON.parse(event.data));
     }
@@ -898,6 +1002,26 @@ define('sockethub/json_client',['./event_handling'], function(eventHandling) {
   return JSONClient;
 
 });
+
+/**
+ * This file is part of sockethub-client.
+ *
+ * © 2013 Niklas E. Cathor (https://github.com/nilclass)
+ * © 2013 Nick Jennings (https://github.com/silverbucket)
+ *
+ * sockethub-client is dual-licensed under either the MIT License or GPLv3 (at your choice).
+ * See the files LICENSE-MIT and LICENSE-GPL for details.
+ *
+ * The latest version of sockethub-client can be found here:
+ *   git://github.com/sockethub/sockethub-client.git
+ *
+ * For more information about sockethub visit http://sockethub.org/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
 
 define('sockethub/connect',[
   './extend',
@@ -959,6 +1083,26 @@ define('sockethub/connect',[
   return connect;
 
 });
+
+/**
+ * This file is part of sockethub-client.
+ *
+ * © 2013 Niklas E. Cathor (https://github.com/nilclass)
+ * © 2013 Nick Jennings (https://github.com/silverbucket)
+ *
+ * sockethub-client is dual-licensed under either the MIT License or GPLv3 (at your choice).
+ * See the files LICENSE-MIT and LICENSE-GPL for details.
+ *
+ * The latest version of sockethub-client can be found here:
+ *   git://github.com/sockethub/sockethub-client.git
+ *
+ * For more information about sockethub visit http://sockethub.org/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
 
 define('sockethub/remoteStorage',[], function() {
 
@@ -1030,6 +1174,26 @@ define('sockethub/remoteStorage',[], function() {
   return connectRemoteStorage;
 
 });
+/**
+ * This file is part of sockethub-client.
+ *
+ * © 2013 Niklas E. Cathor (https://github.com/nilclass)
+ * © 2013 Nick Jennings (https://github.com/silverbucket)
+ *
+ * sockethub-client is dual-licensed under either the MIT License or GPLv3 (at your choice).
+ * See the files LICENSE-MIT and LICENSE-GPL for details.
+ *
+ * The latest version of sockethub-client can be found here:
+ *   git://github.com/sockethub/sockethub-client.git
+ *
+ * For more information about sockethub visit http://sockethub.org/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
+
 define('verbs/core',[], function() {
 
   var coreVerbs = function(client) {
@@ -1081,6 +1245,10 @@ define('verbs/core',[], function() {
       platform: 'dispatcher',
     }, function(method) {
       return function() {
+        if(client.registered) {
+          console.log('WARNING: already registered!');
+          console.trace();
+        }
         return method.apply(this, arguments).then(function(response) {
           client.registered = response.status;
           if(! response.status) {
@@ -1116,6 +1284,10 @@ define('verbs/core',[], function() {
       }
     });
 
+    client.on('disconnected', function() {
+      // make sure 'registered' flag is not set, in case the client is re-used.
+      delete client.registered;
+    });
 
     // Verb: set
     client.declareVerb('set', ['target.platform', 'object'], {
@@ -1127,6 +1299,26 @@ define('verbs/core',[], function() {
 
   return coreVerbs;
 });
+
+/**
+ * This file is part of sockethub-client.
+ *
+ * © 2013 Niklas E. Cathor (https://github.com/nilclass)
+ * © 2013 Nick Jennings (https://github.com/silverbucket)
+ *
+ * sockethub-client is dual-licensed under either the MIT License or GPLv3 (at your choice).
+ * See the files LICENSE-MIT and LICENSE-GPL for details.
+ *
+ * The latest version of sockethub-client can be found here:
+ *   git://github.com/sockethub/sockethub-client.git
+ *
+ * For more information about sockethub visit http://sockethub.org/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
 
 define('sockethub-client',[
   'sockethub/client',
