@@ -1,6 +1,6 @@
 {
   "name":"sockethub-client",
-  "version":"0.0.1-dev",
+  "version":"0.1",
   "devDependencies": {
     "requirejs":"*",
     "amdefine":"*",

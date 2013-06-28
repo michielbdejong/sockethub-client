@@ -1,5 +1,5 @@
 /**
- * sockethub-client 0.0.1-dev
+ * sockethub-client 0.1
  *
  * © 2013 Niklas E. Cathor (https://github.com/nilclass)
  * © 2013 Nick Jennings (https://github.com/silverbucket)
