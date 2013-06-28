@@ -34,6 +34,8 @@ sockethubClient.on('registered', function() {
   console.log('ping');
   sockethubClient.ping().then(function() {
     console.log('pong');
+  }, function(response) {
+    console.log('ping failed: ', response.message);
   });
 });
 ```
