@@ -101,7 +101,7 @@ define([], function() {
 
     // Automatic registration, when 'register' option was passed during 'connect'.
     client.on('connected', function() {
-      console.log('automatic registration!', client.options);
+      console.log('options passed to connect:', client.options);
       if(client.options.register) {
         console.log('automatic registration!');
         client.register(client.options.register);
