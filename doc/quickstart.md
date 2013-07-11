@@ -33,7 +33,7 @@ When passing the URI as a string, you can still specify options:
 
 ## register
 
-In order to actually use the sockethub, you first need to send the "register" command, passing along your sockethub secret:
+In order to actually use the sockethub, unless you passed a `register` option in the `connect` call, you first need to wait for the `connected` event, and then send the "register" command, passing along your sockethub secret:
 
 ```javascript
 sockethubClient.register({ secret: '1234567890' })
