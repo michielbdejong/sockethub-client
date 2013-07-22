@@ -238,7 +238,7 @@ function (SH, settings, $rootScope) {
     restrict: 'A',
     template: '<div id="modalSockethubSettings" class="modal hide fade">' +
               '  <div class="modal-header">' +
-              '    <img src="{{ settings.env.logo }}" width="200" />' +
+              '    <img src="{{settings.env.logo}}" width="200" />' +
               '  </div>' +
               '  <div class="modal-body">' +
               '    <form name="settingsSockethub" class="form-horizontal" novalidate>' +
@@ -297,6 +297,11 @@ function (SH, settings, $rootScope) {
               type: 'clear'
         });
         settings.save('conn', cfg);
+        $rootScope.$broadcast('message', {
+              message: 'attempting to connect to sockethub',
+              type: 'info',
+              timeout: false
+        });
         SH.connect().then(function () {
           return SH.register();
         }).then(function () {
