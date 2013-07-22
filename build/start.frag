@@ -1,5 +1,5 @@
 /**
- * This file is part of sockethub-client.
+ * sockethub-client 0.1
  *
  * © 2013 Niklas E. Cathor (https://github.com/nilclass)
  * © 2013 Nick Jennings (https://github.com/silverbucket)
@@ -18,21 +18,10 @@
  *
  */
 
-define([], function() {
-  function extend(target) {
-    var sources = Array.prototype.slice.call(arguments, 1);
-    sources.forEach(function(source) {
-      for(var key in source) {
-        if(typeof(source[key]) === 'object' &&
-           typeof(target[key]) === 'object') {
-          extend(target[key], source[key]);
-        } else {
-          target[key] = source[key];
-        }
-      }
-    });
-    return target;
-  }
-
-  return extend;
-});
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(factory);
+    } else {
+        root.SockethubClient = factory();
+    }
+}(this, function () {

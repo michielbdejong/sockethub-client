@@ -59,7 +59,7 @@ function ($rootScope, $q, $timeout, settings) {
 
   function isConnected() {
     if (sc) {
-      return sc.isConnected();
+      return sc.connected;
     } else {
       return false;
     }
@@ -67,7 +67,7 @@ function ($rootScope, $q, $timeout, settings) {
 
   function isRegistered() {
     if (sc) {
-      return sc.isRegistered();
+      return sc.registered;
     } else {
       return false;
     }
@@ -102,52 +102,54 @@ function ($rootScope, $q, $timeout, settings) {
     if (settings.conn.tls) {
       scheme = 'wss://';
     }
-    SockethubClient.connect({
-      host: scheme + settings.conn.host + ':' + settings.conn.port + settings.conn.path,
-      confirmationTimeout: 3000   // timeout in miliseconds to wait for confirm
-    }).then(function (connection) {
-      sc = connection;
-      console.log('CONNECTED [connected: '+sc.isConnected()+'] [registered: '+sc.isRegistered()+']');
-      sc.on('message', function (data) {
-        //console.log('SH received message');
-        if ((data.platform) &&
-            (callbacks['message'][data.platform])) {
-          console.log('SH passing message to platform: '+data.platform);
-          $rootScope.$apply(callbacks['message'][data.platform](data));
-        }
-      });
-      sc.on('error', function (data) {
-        console.log('SH received error: ', data);
-        if ((data.platform) &&
-            (callbacks['error'][data.platform])) {
-          console.log('SH passing error to platform: '+data.platform);
-          $rootScope.$apply(callbacks['error'][data.platform](data));
-        }
-      });
-      sc.on('response', function (data) {
-        console.log('SH received response: ', data);
-        if ((data.platform) &&
-            (callbacks['response'][data.platform])) {
-          console.log('SH passing response to platform: '+data.platform);
-          $rootScope.$apply(callbacks['response'][data.platform](data));
-        }
-      });
-      sc.on('close', function (data) {
-        console.log('SH received close: ', data);
-        if ((data) && (data.platform) &&
-            (callbacks[close][data.platform])) {
-          console.log('SH passing close to platform: '+data.platform);
-          $rootScope.$apply(callbacks['close'][data.platform](data));
-        }
-      });
+    sc = SockethubClient.connect(scheme +
+                                 settings.conn.host + ':' +
+                                 settings.conn.port +
+                                 settings.conn.path, {
+      register: {
+        secret: settings.conn.secret
+      }
+    });
+
+    sc.on('registered', function () { // connected
+      console.log('Sockethub connected & registered');
       $rootScope.$apply(function () {
         defer.resolve();
       });
-    }, function (err) { // sockethub connection failed
+    });
+
+    sc.on('registration-failed', function (err) { // connected
+      console.log('Sockethub register failed ', err);
       $rootScope.$apply(function () {
         defer.reject(err);
       });
     });
+
+    sc.on('failed', function (err) { // connection failed
+      console.log('Sockethub connected failed ', err);
+      $rootScope.$apply(function () {
+        defer.reject(err);
+      });
+    });
+
+    sc.on('disconnected', function (err) { // disconnected
+      console.log('SH received disconnect(close) '+err);
+    });
+
+    sc.on('message', function (data) { // message
+      if ((data.platform) &&
+          (callbacks['message'][data.platform])) {
+        console.log('SH passing message to platform: '+data.platform);
+        $rootScope.$apply(callbacks['message'][data.platform](data));
+      } else {
+        console.log('SH received message with nothing to call: ', data);
+      }
+    });
+
+    sc.on('unexpected-response', function (msg) {
+      console.log('SH unexpected response: ', msg);
+    });
+
     return defer.promise;
   }
 
@@ -184,7 +186,7 @@ function ($rootScope, $q, $timeout, settings) {
 
     callOnReady({
       testFunc: isRegistered,
-      callFunc: 'submit',
+      callFunc: 'sendObject',
       callParams: [obj, timeout]
     }).then(defer.resolve, defer.reject);
 

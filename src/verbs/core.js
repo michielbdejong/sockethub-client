@@ -1,3 +1,23 @@
+/**
+ * This file is part of sockethub-client.
+ *
+ * © 2013 Niklas E. Cathor (https://github.com/nilclass)
+ * © 2013 Nick Jennings (https://github.com/silverbucket)
+ *
+ * sockethub-client is dual-licensed under either the MIT License or GPLv3 (at your choice).
+ * See the files LICENSE-MIT and LICENSE-GPL for details.
+ *
+ * The latest version of sockethub-client can be found here:
+ *   git://github.com/sockethub/sockethub-client.git
+ *
+ * For more information about sockethub visit http://sockethub.org/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
+
 define([], function() {
 
   var coreVerbs = function(client) {
@@ -44,22 +64,30 @@ define([], function() {
       };
     });
 
-
     // Verb: register
     client.declareVerb('register', ['object'], {
       platform: 'dispatcher',
     }, function(method) {
       return function() {
+        if(client.registered) {
+          console.log('WARNING: already registered!');
+          console.trace();
+        }
         return method.apply(this, arguments).then(function(response) {
+          client.registered = response.status;
           if(! response.status) {
-            client._emit('registration-failed', response);
+            setTimeout(function() {
+              client._emit('registration-failed', response);
+            }, 0);
             throw "Registration failed: " + response.message;
           }
-          client._emit('registered');
+          setTimeout(function() { client._emit('registered'); }, 0);
           return response;
         });
       };
     });
+
+    client.registered = false;
 
     // Event: registered
     //
@@ -73,13 +101,17 @@ define([], function() {
 
     // Automatic registration, when 'register' option was passed during 'connect'.
     client.on('connected', function() {
-      console.log('automatic registration!', client.options);
+      console.log('options passed to connect:', client.options);
       if(client.options.register) {
         console.log('automatic registration!');
         client.register(client.options.register);
       }
     });
 
+    client.on('disconnected', function() {
+      // make sure 'registered' flag is not set, in case the client is re-used.
+      delete client.registered;
+    });
 
     // Verb: set
     client.declareVerb('set', ['target.platform', 'object'], {

@@ -2,45 +2,49 @@
 
 ## connect
 
+You can either pass the connection options via an object...
+
 ```javascript
-  var sc;
-  SockethubClient.connect({
-    host: 'ws://'+host+':'+port+'/sockethub',
-    confirmationTimeout: 3000 // timeout in ms to wait for a response from sockethub before the promise fails
-  }).then(function (connection) {
-    sc = connection;
-    sc.on('message', function (data) {
-      console.log('received a new message from sockethub: ', data);
-    });
+  var sockethubClient = SockethubClient.connect({
+    host: 'localhost', // only required option
+    // these are the defaults:
+    port: 10550,
+    ssl: false,
+    path: '/sockethub'
+  });
+```
 
-    sc.on('error', function (data) {
-      console.log('received an error from sockethub: ', data);
-    });
+...or via a URI string:
 
-    sc.on('close', function (data) {
-      console.log('received a close from sockethub: ', data);
-    });
 
-    sc.on('message', function (data) {
-      console.log('received a new message from sockethub: ', data);
-    });
-  }, function (err) {
-    console.log('error connection to sockethub: ', err);
+```javascript
+  var sockethubClient = SockethubClient.connect('ws://localhost:10550/sockethub');
+```
+
+When passing the URI as a string, you can still specify options:
+
+
+```javascript
+  var sockethubClient = SockethubClient.connect('ws://localhost:10550/sockethub', {
+    some: 'option'
   });
 ```
 
 
 ## register
 
+In order to actually use the sockethub, unless you passed a `register` option in the `connect` call, you first need to wait for the `connected` event, and then send the "register" command, passing along your sockethub secret:
 
 ```javascript
-  sc.register({
-    secret: '1234567890'
-  }).then(function () {
-    console.log("we're registered, hooray!");
-  }, function (err) {
-    console.log('failed to register with sockethub :( ', err);
-  });
+sockethubClient.register({ secret: '1234567890' })
+
+sockethubClient.on('registered', function() {
+  // now you're registered.
+});
+
+sockethubClient.on('registration-failed', function(response) {
+  // something went wrong. inspect the response to find out what.
+});
 ```
 
 
@@ -48,7 +52,7 @@
 To set credentials for the platforms we will want to use
 
 ```javascript
-  sc.set('facebook', {
+  sockethubClient.set('facebook', {
     credentials: {
       me: {
         access_token: access_token
@@ -62,11 +66,11 @@ To set credentials for the platforms we will want to use
 ```
 
 
-## submit
+## sendObject
 generic function to send data to sockethub
 
 ```javascript
-  sc.submit({
+  sockethubClient.sendObject({
     platform: 'facebook',
     verb: 'post',
     actor: { address: 'me' },
@@ -74,12 +78,10 @@ generic function to send data to sockethub
     object: {
       text: 'Hello facebook, love Sockethub'
     }
-  }, 10000).then(function (response) {
+  }).then(function (response) {
     console.log('post sucessful, heres the response: ', response);
   }, function (err) {
     console.log('oh no! ', err);
   });
 ```
-
-
 

@@ -121,6 +121,25 @@ define(['requirejs'], function(requirejs) {
         },
 
         {
+          desc: "#sendObject's promise is also rejected, when the response has status=false",
+          run: function(env, test) {
+            env.client.sendObject({}).
+              then(function() {
+                test.result(false);
+              }, function(error) {
+                test.assert(error.message, 'err-msg');
+              });
+            var rid = env.fakeJsonClient._sentObjects[0].rid;
+            var messageEventHandler = env.fakeJsonClient._eventHandlers.message[0];
+            messageEventHandler({
+              message: 'err-msg',
+              rid: rid,
+              status: false
+            });
+          }
+        },
+
+        {
           desc: "#declareVerb declares a new verb method",
           run: function(env, test) {
             env.client.declareVerb('travel', [], {});
@@ -306,6 +325,17 @@ define(['requirejs'], function(requirejs) {
               test.assert(message.rid, 12345);
             });
             env.fakeJsonClient._eventHandlers.message[0]({ rid: 12345 });
+          }
+        },
+
+        {
+          desc: "the client's 'connected' state is the same as the jsonClient's",
+          run: function(env, test) {
+            env.client.jsonClient.connected = true;
+            test.assertAnd(env.client.connected, true);
+            env.client.jsonClient.connected = false;
+            test.assertAnd(env.client.connected, false);
+            test.done();
           }
         }
 
