@@ -126,9 +126,11 @@ function ($rootScope, $q, $timeout, settings) {
     });
 
     sc.on('failed', function (err) { // connection failed
-      console.log('Sockethub connected failed ', err);
+      console.log('Sockethub connection failed ', err);
       $rootScope.$apply(function () {
-        defer.reject(err);
+        defer.reject('Failed connecting to sockethub at ' + scheme +
+                     settings.conn.host + ':' + settings.conn.port +
+                     settings.conn.path);
       });
     });
 
@@ -295,9 +297,9 @@ function (SH, settings, $rootScope) {
       scope.settings = settings;
       scope.save = function (cfg) {
         scope.saving = true;
-        $rootScope.$broadcast('message', {
+        /*$rootScope.$broadcast('message', {
               type: 'clear'
-        });
+        });*/
         settings.save('conn', cfg);
         $rootScope.$broadcast('message', {
               message: 'attempting to connect to sockethub',
