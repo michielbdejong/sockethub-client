@@ -242,7 +242,7 @@ function (SH, settings, $rootScope) {
     restrict: 'A',
     template: '<div id="modalSockethubSettings" class="modal hide fade">' +
               '  <div class="modal-header">' +
-              '    <img src="{{settings.env.logo}}" width="200" />' +
+              '    <img data-ng-src="{{ settings.env.logo }}" width="200" ng-cloak/>' +
               '  </div>' +
               '  <div class="modal-body">' +
               '    <form name="settingsSockethub" class="form-horizontal" novalidate>' +
