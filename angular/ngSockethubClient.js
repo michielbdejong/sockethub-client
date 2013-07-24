@@ -322,6 +322,7 @@ function (SH, settings, $rootScope) {
                 type: 'success',
                 timeout: false
           });
+          $("#modalSockethubSettings").modal('hide');
         }, function (err) {
           scope.saving = false;
           console.log('error connection to sockethub: ', err);
