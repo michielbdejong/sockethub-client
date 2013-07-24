@@ -320,7 +320,7 @@ function (SH, settings, $rootScope) {
           $rootScope.$broadcast('message', {
                 message: 'connected to sockethub',
                 type: 'success',
-                timeout: false
+                timeout: true
           });
           $("#modalSockethubSettings").modal('hide');
         }, function (err) {
