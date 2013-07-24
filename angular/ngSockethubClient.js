@@ -96,20 +96,28 @@ function ($rootScope, $q, $timeout, settings) {
     return defer.promise;
   }
 
-  function connect() {
+  function connect(p) {
     var defer = $q.defer();
     var scheme = 'ws://';
     if (settings.conn.tls) {
       scheme = 'wss://';
     }
+
+    var robj = {};
+    if (p.register) {
+      robj = {
+        register: {
+          secret: settings.conn.secret
+        }
+      };
+    }
+
     sc = SockethubClient.connect(scheme +
                                  settings.conn.host + ':' +
                                  settings.conn.port +
-                                 settings.conn.path, {
-      register: {
-        secret: settings.conn.secret
-      }
-    });
+                                 settings.conn.path,
+                                 robj
+    );
 
     sc.on('registered', function () { // connected
       console.log('Sockethub connected & registered');
@@ -306,9 +314,7 @@ function (SH, settings, $rootScope) {
               type: 'info',
               timeout: false
         });
-        SH.connect().then(function () {
-          return SH.register();
-        }).then(function () {
+        SH.connect({register: true}).then(function () {
           scope.saving = false;
           console.log('connected to sockethub');
           $rootScope.$broadcast('message', {
