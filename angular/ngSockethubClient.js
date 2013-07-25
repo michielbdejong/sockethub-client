@@ -12,6 +12,7 @@ value('SockethubSettings', {
     tls: false,
     secret: '1234567890'
   },
+  connected: false,
   env: {
     logo: '/res/img/sockethub-logo.svg'
   },
@@ -99,6 +100,7 @@ function ($rootScope, $q, $timeout, settings) {
   function connect(p) {
     var defer = $q.defer();
     var scheme = 'ws://';
+    settings.connected = false;
     if (settings.conn.tls) {
       scheme = 'wss://';
     }
@@ -121,6 +123,7 @@ function ($rootScope, $q, $timeout, settings) {
 
     sc.on('registered', function () { // connected
       console.log('Sockethub connected & registered');
+      settings.connected = true;
       $rootScope.$apply(function () {
         defer.resolve();
       });
@@ -143,6 +146,7 @@ function ($rootScope, $q, $timeout, settings) {
     });
 
     sc.on('disconnected', function (err) { // disconnected
+      settings.connected = false;
       console.log('SH received disconnect(close) '+err);
     });
 
