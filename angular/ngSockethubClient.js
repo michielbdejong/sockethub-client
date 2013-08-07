@@ -98,6 +98,7 @@ function ($rootScope, $q, $timeout, settings) {
   }
 
   function connect(p) {
+    console.log('ngSockethubClient.connect() ', p);
     var defer = $q.defer();
     var scheme = 'ws://';
     settings.connected = false;
@@ -121,7 +122,15 @@ function ($rootScope, $q, $timeout, settings) {
                                  robj
     );
 
-    sc.on('registered', function () { // connected
+    sc.on('connected', function () { // connected
+      console.log('Sockethub connected');
+      settings.connected = true;
+      $rootScope.$apply(function () {
+        defer.resolve();
+      });
+    });
+
+    sc.on('registered', function () { // connected & registered
       console.log('Sockethub connected & registered');
       settings.connected = true;
       $rootScope.$apply(function () {
@@ -146,8 +155,8 @@ function ($rootScope, $q, $timeout, settings) {
     });
 
     sc.on('disconnected', function (err) { // disconnected
-      settings.connected = false;
       console.log('SH received disconnect(close) '+err);
+      settings.connected = false;
     });
 
     sc.on('message', function (data) { // message
