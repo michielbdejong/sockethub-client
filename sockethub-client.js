@@ -1,5 +1,5 @@
 /**
- * sockethub-client 0.0.1-dev
+ * sockethub-client 0.1
  *
  * © 2013 Niklas E. Cathor (https://github.com/nilclass)
  * © 2013 Nick Jennings (https://github.com/silverbucket)
@@ -1277,7 +1277,7 @@ define('verbs/core',[], function() {
 
     // Automatic registration, when 'register' option was passed during 'connect'.
     client.on('connected', function() {
-      console.log('automatic registration!', client.options);
+      console.log('options passed to connect:', client.options);
       if(client.options.register) {
         console.log('automatic registration!');
         client.register(client.options.register);
