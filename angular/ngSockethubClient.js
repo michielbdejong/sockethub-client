@@ -106,7 +106,7 @@ function ($rootScope, $q, $timeout, settings) {
     }
 
     var robj = {};
-    if (p.register) {
+    if ((p) && (p.register)) {
       robj = {
         register: {
           secret: settings.conn.secret
