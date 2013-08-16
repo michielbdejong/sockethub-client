@@ -40,6 +40,8 @@ sockethubClient.on('registered', function() {
 });
 ```
 
+When using ssl, add a field `ssl: true` to the options in the `sockethubClient.connect` call.
+
 You may also want to set up some error handlers:
 ```javascript
 sockethubClient.on('failed', function() {
