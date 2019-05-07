@@ -3,7 +3,7 @@
 This library handles all the nitty-gritty details of talking to your
 [sockethub](http://sockethub.org/).
 
-[![Build Status](https://secure.travis-ci.org/sockethub/sockethub-client.png)](http://travis-ci.org/sockethub/sockethub-client)
+[![Build Status](https://secure.travis-ci.org/sockethub/sockethub-client.png)](http://travis-ci.org/sockethub/sockethub-client) [![Greenkeeper badge](https://badges.greenkeeper.io/michielbdejong/sockethub-client.svg)](https://greenkeeper.io/)
 
 ## Terms
 
